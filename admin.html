@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Canella VRN — Панель управления</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,78 +14,114 @@ tailwind.config={theme:{extend:{colors:{deep:'#3B0A17',wine:'#4D1121',gold:'#C9A
 <style>
 body{background:#FBF7F4;color:#1E1416;font-weight:500}
 .hide{display:none!important}
-.f{width:100%;padding:.65rem .85rem;background:#fff;border:1.5px solid #E7DDD8;border-radius:.75rem;font-weight:600;outline:none;transition:border-color .15s}
+.f{width:100%;padding:.65rem .85rem;background:#fff;border:1.5px solid #E7DDD8;border-radius:.75rem;font-weight:600;outline:none;transition:border-color .15s; font-size:16px}
 .f:focus{border-color:#3B0A17}
 .lbl{display:block;font-size:.75rem;font-weight:700;color:#7A6B6E;margin-bottom:.35rem}
-.btn{background:#3B0A17;color:#fff;font-weight:700;padding:.65rem 1.1rem;border-radius:.75rem;transition:background .15s}
+.btn{background:#3B0A17;color:#fff;font-weight:700;padding:.75rem 1.1rem;border-radius:.75rem;transition:background .15s; display:inline-flex; align-items:center; justify-content:center; text-align:center;}
 .btn:hover{background:#5E1829}
-.btn2{background:#fff;border:1.5px solid #E7DDD8;font-weight:700;padding:.6rem 1rem;border-radius:.75rem}
+.btn2{background:#fff;border:1.5px solid #E7DDD8;font-weight:700;padding:.65rem 1rem;border-radius:.75rem; display:inline-flex; align-items:center; justify-content:center; text-align:center;}
 .btn2:hover{border-color:#3B0A17}
 .card{background:#fff;border:1.5px solid #EFE6E1;border-radius:1.25rem}
-.nav{display:flex;align-items:center;gap:.75rem;width:100%;padding:.8rem 1rem;border-radius:.85rem;font-weight:700;color:#cdb9bd;text-align:left}
+.nav{display:flex;align-items:center;gap:.75rem;width:100%;padding:.8rem 1rem;border-radius:.85rem;font-weight:700;color:#cdb9bd;text-align:left; transition:all .2s;}
 .nav:hover{background:rgba(255,255,255,.07);color:#fff}
 .nav.on{background:#C9A24B;color:#3B0A17}
 .chip{font-size:.7rem;font-weight:800;padding:.2rem .55rem;border-radius:999px;background:#F3E9D2;color:#6b4e12}
 :focus-visible{outline:2px solid #C9A24B;outline-offset:2px}
 </style>
 </head>
-<body class="h-screen overflow-hidden text-[15px] flex">
+<body class="h-screen overflow-hidden text-[15px] flex flex-col md:flex-row">
 
-<div id="loginScreen" class="fixed inset-0 z-50 bg-deep flex items-center justify-center p-4">
-  <div class="bg-cream p-10 rounded-3xl max-w-sm w-full text-center">
+<!-- ЭКРАН ВХОДА -->
+<div id="loginScreen" class="fixed inset-0 z-[100] bg-deep flex items-center justify-center p-4">
+  <div class="bg-cream p-8 md:p-10 rounded-3xl max-w-sm w-full text-center shadow-2xl">
     <h1 class="font-display font-bold text-2xl text-deep mb-2">CANELLA<span class="text-gold">.</span></h1>
-    <p class="text-muted font-semibold mb-8">Введите пароль, чтобы войти</p>
-    <input type="password" id="adminPassword" placeholder="Пароль" class="f mb-4">
+    <p class="text-muted font-semibold mb-8 text-sm">Введите пароль, чтобы войти</p>
+    <input type="password" id="adminPassword" placeholder="Пароль" class="f mb-4 text-center tracking-widest">
     <button onclick="checkPassword()" class="btn w-full">Войти</button>
     <p id="loginError" class="text-red-600 font-bold text-sm mt-3 hide">Неверный пароль</p>
   </div>
 </div>
 
-<aside id="sidebar" class="w-64 bg-deep flex flex-col hide shrink-0">
-  <div class="h-20 flex items-center px-7"><h2 class="font-display font-bold text-xl text-white">CANELLA<span class="text-gold">.</span></h2></div>
-  <nav class="flex-1 px-4 py-4 space-y-1.5">
-    <button class="nav on" id="tab-catalog" onclick="switchTab('catalog')">Каталог вкусов</button>
-    <button class="nav" id="tab-promos" onclick="switchTab('promos')">Промокоды</button>
-    <button class="nav" id="tab-marketing" onclick="switchTab('marketing')">Доставка и акции</button>
+<!-- ОВЕРЛЕЙ ДЛЯ МОБИЛЬНОГО МЕНЮ -->
+<div id="mobileMenuOverlay" onclick="toggleMobileMenu()" class="fixed inset-0 z-40 bg-black/50 hide md:hidden"></div>
+
+<!-- БОКОВОЕ МЕНЮ -->
+<aside id="sidebar" class="fixed md:static inset-y-0 left-0 z-50 w-64 bg-deep flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-300 shrink-0 shadow-xl md:shadow-none hide">
+  <div class="h-16 md:h-20 flex items-center justify-between px-6 shrink-0 border-b border-white/5 md:border-transparent">
+    <h2 class="font-display font-bold text-xl text-white">CANELLA<span class="text-gold">.</span></h2>
+    <button onclick="toggleMobileMenu()" class="md:hidden text-white/50 hover:text-white p-2 text-2xl leading-none">×</button>
+  </div>
+  <nav class="flex-1 px-4 py-4 space-y-1.5 overflow-y-auto">
+    <button class="nav on" id="tab-catalog" onclick="switchTab('catalog')">
+      <svg class="w-5 h-5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+      Каталог вкусов
+    </button>
+    <button class="nav" id="tab-promos" onclick="switchTab('promos')">
+      <svg class="w-5 h-5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+      Промокоды
+    </button>
+    <button class="nav" id="tab-marketing" onclick="switchTab('marketing')">
+      <svg class="w-5 h-5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/></svg>
+      Доставка и акции
+    </button>
   </nav>
-  <div class="p-4"><button onclick="logout()" class="nav">Выйти</button></div>
+  <div class="p-4 border-t border-white/5">
+    <button onclick="logout()" class="nav text-red-400 hover:text-red-300 hover:bg-red-400/10">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+      Выйти
+    </button>
+  </div>
 </aside>
 
-<main id="mainContent" class="flex-1 flex flex-col h-full overflow-hidden hide">
-  <header class="h-20 px-8 flex items-center justify-between shrink-0">
-    <div>
-      <h1 id="pageTitle" class="font-display font-bold text-xl text-deep">Каталог вкусов</h1>
-      <p class="text-muted font-semibold text-sm">Управление сайтом Canella VRN</p>
-    </div>
+<!-- ОСНОВНАЯ ОБЛАСТЬ -->
+<main id="mainContent" class="flex-1 flex flex-col h-full overflow-hidden hide relative bg-[#FBF7F4]">
+  <!-- Мобильная шапка -->
+  <header class="h-16 md:h-20 px-4 md:px-8 flex items-center justify-between shrink-0 bg-white md:bg-transparent border-b border-stone-200 md:border-none sticky top-0 z-30">
     <div class="flex items-center gap-3">
-      <span id="saveIndicator" class="text-sm font-bold text-emerald-700 bg-emerald-100 px-3 py-1.5 rounded-lg opacity-0 transition-opacity">Сохранено в GitHub</span>
-      <button id="saveBtn" onclick="saveAllData()" class="btn">Сохранить изменения</button>
+      <button onclick="toggleMobileMenu()" class="md:hidden p-2 -ml-2 text-deep" aria-label="Меню">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <div>
+        <h1 id="pageTitle" class="font-display font-bold text-lg md:text-xl text-deep">Каталог вкусов</h1>
+        <p class="text-muted font-semibold text-xs hidden sm:block">Управление сайтом Canella VRN</p>
+      </div>
+    </div>
+    
+    <div class="flex items-center gap-3">
+      <span id="saveIndicator" class="text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-1 rounded hidden md:block opacity-0 transition-opacity">Сохранено</span>
+      <button id="saveBtn" onclick="saveAllData()" class="btn !py-2 !px-3 md:!px-5 text-sm">
+        <span class="hidden sm:inline">Сохранить изменения</span>
+        <span class="sm:hidden">Сохранить</span>
+      </button>
     </div>
   </header>
 
-  <div class="flex-1 overflow-y-auto px-8 pb-16">
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8" id="stats"></div>
+  <div class="flex-1 overflow-y-auto p-4 md:p-8 pt-4 md:pt-0">
+    <!-- Статистика -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8" id="stats"></div>
 
+    <!-- ВКЛАДКА: КАТАЛОГ -->
     <section id="view-catalog">
       <div class="flex justify-between items-center mb-4">
-        <h3 class="font-display font-semibold text-base">Макаронс</h3>
-        <button onclick="openFlavorModal()" class="btn2">Добавить вкус</button>
+        <h3 class="font-display font-semibold text-base hidden sm:block">Макаронс</h3>
+        <button onclick="openFlavorModal()" class="btn2 w-full sm:w-auto">Добавить вкус</button>
       </div>
-      <div id="flavorsGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5"></div>
+      <div id="flavorsGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-5"></div>
     </section>
 
+    <!-- ВКЛАДКА: ПРОМОКОДЫ -->
     <section id="view-promos" class="hide">
       <div class="flex justify-between items-center mb-4">
         <h3 class="font-display font-semibold text-base">Ваши промокоды</h3>
       </div>
       <div class="grid lg:grid-cols-5 gap-6 items-start">
-        <div class="card p-6 lg:col-span-2 space-y-4 lg:sticky lg:top-0">
-          <h4 class="font-display font-semibold">Новый промокод</h4>
+        <div class="card p-5 lg:p-6 lg:col-span-2 space-y-4 lg:sticky lg:top-0 order-2 lg:order-1">
+          <h4 class="font-display font-semibold text-sm">Новый промокод</h4>
           <div>
             <label class="lbl">Код</label>
             <div class="flex gap-2">
               <input id="p-code" class="f font-mono uppercase" placeholder="SPRING15" maxlength="20">
-              <button type="button" onclick="randomCode()" class="btn2 shrink-0" title="Придумать код">Случайный</button>
+              <button type="button" onclick="randomCode()" class="btn2 shrink-0 !py-1 px-3 text-xs" title="Сгенерировать случайный код">Случайный</button>
             </div>
           </div>
           <div class="grid grid-cols-2 gap-3">
@@ -97,82 +133,121 @@ body{background:#FBF7F4;color:#1E1416;font-weight:500}
             <div><label class="lbl">Заказ от, ₽</label><input id="p-min" type="number" min="0" value="0" class="f"></div>
             <div><label class="lbl">Действует до</label><input id="p-exp" type="date" class="f"></div>
           </div>
-          <label class="flex items-center gap-2 font-bold"><input type="checkbox" id="p-first" class="w-4 h-4 accent-[#3B0A17]"> Только на первый заказ</label>
-          <div id="promoPreview" class="rounded-xl bg-deep text-white p-4 font-semibold"></div>
+          <label class="flex items-center gap-2 font-bold text-sm"><input type="checkbox" id="p-first" class="w-4 h-4 accent-[#3B0A17]"> Только на первый заказ</label>
+          <div id="promoPreview" class="rounded-xl bg-deep text-white p-4 font-semibold text-sm leading-relaxed"></div>
           <button onclick="addPromo()" class="btn w-full">Создать промокод</button>
-          <p id="p-err" class="text-red-600 font-bold text-sm hide"></p>
+          <p id="p-err" class="text-red-600 font-bold text-sm text-center hide"></p>
         </div>
-        <div class="lg:col-span-3 space-y-3" id="promoList"></div>
+        <div class="lg:col-span-3 space-y-3 order-1 lg:order-2" id="promoList"></div>
       </div>
     </section>
 
-    <section id="view-marketing" class="hide space-y-6 max-w-3xl">
-      <div class="card p-6">
-        <h3 class="font-display font-semibold mb-4">Доставка</h3>
-        <div class="grid grid-cols-2 gap-5">
-          <div><label class="lbl">Бесплатная доставка от, ₽</label><input type="number" id="setting-freeDelivery" class="f"></div>
-          <div><label class="lbl">Стоимость доставки, ₽</label><input type="number" id="setting-costDelivery" class="f"></div>
+    <!-- ВКЛАДКА: МАРКЕТИНГ И ДОСТАВКА -->
+    <section id="view-marketing" class="hide space-y-5 md:space-y-6 max-w-3xl mx-auto lg:mx-0">
+      <div class="card p-5 md:p-6">
+        <h3 class="font-display font-semibold mb-4 text-sm md:text-base">Доставка</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5">
+          <div><label class="lbl">Бесплатная доставка от, ₽</label><input type="number" id="setting-freeDelivery" class="f text-lg md:text-base"></div>
+          <div><label class="lbl">Стоимость доставки, ₽</label><input type="number" id="setting-costDelivery" class="f text-lg md:text-base"></div>
         </div>
       </div>
-      <div class="card p-6 space-y-5">
-        <h3 class="font-display font-semibold">Акции на сайте</h3>
-        <div class="p-4 rounded-xl bg-cream space-y-2">
-          <h4 class="font-bold">Левый блок</h4>
-          <input id="setting-promo1Title" class="f" placeholder="Заголовок">
-          <input id="setting-promo1Desc" class="f" placeholder="Описание">
+      <div class="card p-5 md:p-6 space-y-5">
+        <h3 class="font-display font-semibold text-sm md:text-base">Акции на сайте (Шапка)</h3>
+        <div class="p-4 md:p-5 rounded-xl bg-cream space-y-3 border border-stone-200/50">
+          <h4 class="font-bold text-deep text-sm flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-deep"></span> Левый блок</h4>
+          <div>
+            <label class="lbl">Заголовок</label>
+            <input id="setting-promo1Title" class="f" placeholder="Бесплатная доставка от 5 000 ₽">
+          </div>
+          <div>
+            <label class="lbl">Описание (мелкий текст)</label>
+            <input id="setting-promo1Desc" class="f font-normal" placeholder="Привезём набор по Воронежу бесплатно">
+          </div>
         </div>
-        <div class="p-4 rounded-xl bg-cream space-y-2">
-          <h4 class="font-bold">Правый блок</h4>
-          <input id="setting-promo2Title" class="f" placeholder="Заголовок">
-          <input id="setting-promo2Desc" class="f" placeholder="Описание">
-          <label class="lbl pt-1">Промокод в тексте</label>
-          <input id="setting-promo2Badge" class="f font-mono" placeholder="CANELLA10">
+        <div class="p-4 md:p-5 rounded-xl bg-cream space-y-3 border border-stone-200/50">
+          <h4 class="font-bold text-gold text-sm flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-gold"></span> Правый блок</h4>
+          <div>
+            <label class="lbl">Заголовок</label>
+            <input id="setting-promo2Title" class="f" placeholder="Скидка 10% на первый заказ">
+          </div>
+          <div>
+            <label class="lbl">Описание (мелкий текст)</label>
+            <input id="setting-promo2Desc" class="f font-normal" placeholder="Введите промокод в корзине">
+          </div>
+          <div class="pt-2 border-t border-stone-200/60">
+            <label class="lbl">Выделенный промокод</label>
+            <input id="setting-promo2Badge" class="f font-mono font-bold text-deep" placeholder="CANELLA10">
+          </div>
         </div>
       </div>
     </section>
   </div>
 </main>
 
-<div id="flavorModal" class="fixed inset-0 z-[60] bg-black/50 flex items-center justify-center p-4 hide">
-  <div class="bg-white w-full max-w-xl rounded-3xl overflow-hidden max-h-[92vh] flex flex-col">
-    <div class="px-6 py-4 flex justify-between items-center border-b border-stone-100">
-      <h3 class="font-display font-semibold" id="modalTitle">Редактировать вкус</h3>
-      <button onclick="closeFlavorModal()" class="text-2xl leading-none text-muted hover:text-ink" aria-label="Закрыть">×</button>
+<!-- МОДАЛЬНОЕ ОКНО: РЕДАКТИРОВАНИЕ ВКУСА -->
+<div id="flavorModal" class="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4 hide transition-opacity">
+  <div class="bg-white w-full max-w-xl sm:rounded-3xl rounded-t-3xl overflow-hidden max-h-[90vh] sm:max-h-[95vh] flex flex-col shadow-2xl animate-slide-up sm:animate-none">
+    <div class="px-5 py-4 flex justify-between items-center border-b border-stone-100 bg-stone-50 shrink-0">
+      <h3 class="font-display font-semibold text-deep" id="modalTitle">Редактировать вкус</h3>
+      <button onclick="closeFlavorModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-stone-200 text-stone-600 hover:bg-stone-300 transition-colors" aria-label="Закрыть">✕</button>
     </div>
-    <div class="p-6 space-y-4 overflow-y-auto">
+    
+    <div class="p-5 sm:p-6 space-y-5 overflow-y-auto">
       <input type="hidden" id="modal-id">
-      <div class="flex gap-4 items-center">
-        <div id="modal-preview" class="w-24 h-24 rounded-2xl shrink-0 overflow-hidden flex items-center justify-center bg-cream"></div>
-        <div class="flex-1 space-y-2">
-          <label class="lbl">Фото: имя файла или ссылка</label>
-          <input id="modal-image" class="f" placeholder="macaroon1.png" oninput="previewModalImg()">
+      
+      <!-- Блок фото -->
+      <div class="flex flex-col sm:flex-row gap-4 items-center sm:items-start bg-cream p-4 rounded-2xl border border-stone-100">
+        <div id="modal-preview" class="w-24 h-24 sm:w-20 sm:h-20 rounded-2xl shrink-0 overflow-hidden flex items-center justify-center bg-white shadow-sm border border-stone-200"></div>
+        <div class="flex-1 w-full space-y-2 text-center sm:text-left">
+          <label class="lbl !mb-1">Фото: имя файла или ссылка</label>
+          <input id="modal-image" class="f text-sm" placeholder="macaroon1.png" oninput="previewModalImg()">
         </div>
       </div>
-      <div class="grid grid-cols-2 gap-4">
-        <div><label class="lbl">Название</label><input id="modal-name" class="f"></div>
-        <div><label class="lbl">Слово на фоне</label><input id="modal-watermark" class="f"></div>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div><label class="lbl">Название вкуса</label><input id="modal-name" class="f" placeholder="Например: Фисташка — малина"></div>
+        <div><label class="lbl">Текст на фоне (Водяной знак)</label><input id="modal-watermark" class="f" placeholder="ФИСТАШКА"></div>
       </div>
-      <div><label class="lbl">Состав</label><textarea id="modal-desc" rows="2" class="f resize-none"></textarea></div>
-      <div class="grid grid-cols-3 gap-4">
-        <div><label class="lbl">Цена, ₽</label><input type="number" id="modal-price" class="f"></div>
-        <div><label class="lbl">Бейдж</label><input id="modal-badge" class="f" placeholder="Хит"></div>
-        <div><label class="lbl">Цвет</label>
-          <div class="flex items-center gap-2"><input type="color" id="modal-color" class="w-11 h-11 rounded-lg cursor-pointer border-0 p-0"><span id="modal-color-hex" class="font-mono text-xs uppercase"></span></div></div>
+      
+      <div>
+        <label class="lbl">Описание (Состав)</label>
+        <textarea id="modal-desc" rows="2" class="f resize-none text-sm leading-relaxed" placeholder="Насыщенный ганаш..."></textarea>
+      </div>
+      
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 pb-2">
+        <div><label class="lbl">Цена, ₽</label><input type="number" id="modal-price" class="f font-display"></div>
+        <div><label class="lbl">Бейдж (Стикер)</label><input id="modal-badge" class="f" placeholder="Хит / Новинка"></div>
+        <div>
+          <label class="lbl">Цвет фона</label>
+          <div class="flex items-center gap-2 bg-white border border-[#E7DDD8] rounded-xl p-1 pr-3">
+            <input type="color" id="modal-color" class="w-8 h-8 rounded-lg cursor-pointer border-0 p-0 shrink-0">
+            <span id="modal-color-hex" class="font-mono text-[11px] font-bold uppercase text-stone-500 w-full text-center"></span>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="px-6 py-4 border-t border-stone-100 flex justify-between items-center">
-      <button onclick="deleteFlavor()" id="modal-btn-delete" class="text-red-600 font-bold hover:underline">Удалить</button>
-      <div class="flex gap-2 ml-auto"><button onclick="closeFlavorModal()" class="btn2">Отмена</button><button onclick="saveFlavorModal()" class="btn">Сохранить</button></div>
+    
+    <div class="px-5 py-4 border-t border-stone-100 flex justify-between items-center bg-stone-50 shrink-0">
+      <button onclick="deleteFlavor()" id="modal-btn-delete" class="text-red-600 font-bold hover:underline text-sm py-2 px-1">Удалить</button>
+      <div class="flex gap-2 ml-auto">
+        <button onclick="closeFlavorModal()" class="btn2 !py-2 !px-4 text-sm">Отмена</button>
+        <button onclick="saveFlavorModal()" class="btn !py-2 !px-5 text-sm shadow-md">Сохранить</button>
+      </div>
     </div>
   </div>
 </div>
 
+<style>
+  /* Анимация появления модалки снизу на мобильных */
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .animate-slide-up { animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+</style>
+
 <script>
-// ВСТАВЬ СЮДА СВОЙ АДРЕС ИЗ CLOUDFLARE WORKERS
+// === ПОДКЛЮЧЕНИЕ CLOUDFLARE WORKERS ===
 const API_BASE = "https://weathered-bird-be74.cbikyh2306.workers.dev";
 const LOCAL_ADMIN_PASSWORD = 'admin2026';
 let authToken = localStorage.getItem('canella_worker_auth') || null;
-// Пока вместо адреса стоит заглушка (пусто или кириллица), работаем локально без Worker
 let localMode = !API_BASE || /[^\x00-\x7F]/.test(API_BASE);
 const LOCAL_DATA_KEY = 'canella_admin_data';
 
@@ -192,6 +267,21 @@ let db = JSON.parse(JSON.stringify(defaultData));
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
+// Мобильное меню
+function toggleMobileMenu() {
+  const sidebar = $('sidebar');
+  const overlay = $('mobileMenuOverlay');
+  const isOpen = !sidebar.classList.contains('-translate-x-full');
+  
+  if (isOpen) {
+    sidebar.classList.add('-translate-x-full');
+    overlay.classList.add('hide');
+  } else {
+    sidebar.classList.remove('hide', '-translate-x-full');
+    overlay.classList.remove('hide');
+  }
+}
+
 async function checkPassword() {
   const password = $('adminPassword').value;
   try {
@@ -200,8 +290,7 @@ async function checkPassword() {
       authToken = 'local-session';
       localStorage.setItem('canella_worker_auth', authToken);
       $('loginScreen').classList.add('hide');
-      $('sidebar').classList.remove('hide');
-      $('mainContent').classList.remove('hide');
+      $('sidebar').classList.remove('hide');$('mainContent').classList.remove('hide');
       await loadDataFromWorker();
       return;
     }
@@ -217,8 +306,7 @@ async function checkPassword() {
     authToken = data.token;
     localStorage.setItem('canella_worker_auth', authToken);
     $('loginScreen').classList.add('hide');
-    $('sidebar').classList.remove('hide');
-    $('mainContent').classList.remove('hide');
+    $('sidebar').classList.remove('hide');$('mainContent').classList.remove('hide');
     await loadDataFromWorker();
   } catch (e) {
     showLoginError('Нет связи с сервером. Проверьте API_BASE.');
@@ -240,7 +328,6 @@ function logout() {
 }
 $('adminPassword').addEventListener('keydown', e => { if (e.key === 'Enter') checkPassword(); });
 
-// Автологин если токен есть
 window.addEventListener('DOMContentLoaded', async () => {
  if (authToken) {
   $('loginScreen').classList.add('hide');
@@ -256,7 +343,6 @@ async function loadDataFromWorker() {
       db = saved ? { ...JSON.parse(saved), settings: { ...defaultData.settings, ...(JSON.parse(saved).settings || {}) } } : JSON.parse(JSON.stringify(defaultData));
     } catch (e) {
       db = JSON.parse(JSON.stringify(defaultData));
-      console.warn('Не удалось прочитать локальные данные; загружены значения по умолчанию.', e);
     }
     init();
     return;
@@ -278,12 +364,8 @@ async function loadDataFromWorker() {
     } else if (res.status === 401) {
       logout();
       return;
-    } else {
-      alert('Не удалось загрузить данные из Worker. Проверьте его настройки.');
-      db = JSON.parse(JSON.stringify(defaultData));
     }
   } catch (e) {
-    alert('Не удалось подключиться к Worker. Проверьте URL и доступность сервиса.');
     db = JSON.parse(JSON.stringify(defaultData));
   }
   init();
@@ -295,6 +377,7 @@ function switchTab(t) {
   $('view-'+k).classList.toggle('hide', k !== t);$('tab-'+k).classList.toggle('on', k === t);
  });
  $('pageTitle').textContent = titles[t];
+ if (window.innerWidth < 768) toggleMobileMenu(); // Закрываем меню на мобилках после клика
 }
 
 function init() {
@@ -312,12 +395,12 @@ function renderStats() {
  const f = db.flavors, avg = f.length ? Math.round(f.reduce((a,x) => a + x.price, 0) / f.length) : 0;
  const act = db.promos.filter(p => p.active).length;
  const cards = [
-  ['Вкусов в каталоге', f.length],
-  ['Средняя цена', avg + ' ₽'],
-  ['Активных промокодов', act],
-  ['Бесплатная доставка от', (db.settings.freeDeliveryThreshold || 5000).toLocaleString('ru-RU') + ' ₽']
+  ['Вкусов', f.length],
+  ['Ср. цена', avg + ' ₽'],
+  ['Промокоды', act],
+  ['Фри шип от', (db.settings.freeDeliveryThreshold || 5000).toLocaleString('ru-RU') + ' ₽']
  ];
- $('stats').innerHTML = cards.map(c => `<div class="card p-5"><div class="text-muted font-bold text-sm mb-1">${c[0]}</div><div class="font-display font-semibold text-2xl text-deep">${c[1]}</div></div>`).join('');
+ $('stats').innerHTML = cards.map(c => `<div class="card p-4 md:p-5"><div class="text-muted font-bold text-xs md:text-sm mb-1">${c[0]}</div><div class="font-display font-semibold text-xl md:text-2xl text-deep truncate">${c[1]}</div></div>`).join('');
 }
 
 function imgTag(f, cls) {
@@ -326,21 +409,21 @@ function imgTag(f, cls) {
 
 function renderFlavors() {
  $('flavorsGrid').innerHTML = db.flavors.map(f => `
-  <div class="card overflow-hidden hover:shadow-lg transition-shadow">
-   <div class="h-44 relative flex items-center justify-center overflow-hidden" style="background:${esc(f.color)}26">
-    <span class="absolute font-display font-bold text-5xl text-deep/10 select-none whitespace-nowrap">${esc(f.watermark)}</span>
-    ${imgTag(f, 'relative z-10 h-36 w-36 object-contain drop-shadow-xl')}
-    <span class="chip absolute top-3 right-3">${esc(f.badge)}</span>
+  <div class="card overflow-hidden hover:shadow-lg transition-shadow flex flex-col h-full">
+   <div class="h-36 md:h-44 relative flex items-center justify-center overflow-hidden shrink-0" style="background:${esc(f.color)}26">
+    <span class="absolute font-display font-bold text-4xl md:text-5xl text-deep/10 select-none whitespace-nowrap">${esc(f.watermark)}</span>
+    ${imgTag(f, 'relative z-10 h-28 md:h-36 w-28 md:w-36 object-contain drop-shadow-xl')}
+    <span class="chip absolute top-3 right-3 shadow-sm">${esc(f.badge)}</span>
    </div>
-   <div class="p-5">
-    <h4 class="font-display font-semibold text-sm mb-2 line-clamp-1">${esc(f.name)}</h4>
-    <p class="text-sm text-muted font-semibold line-clamp-2 h-10 mb-4">${esc(f.desc)}</p>
-    <div class="flex items-center justify-between">
+   <div class="p-4 md:p-5 flex flex-col flex-1">
+    <h4 class="font-display font-semibold text-sm mb-1.5 line-clamp-1 text-deep">${esc(f.name)}</h4>
+    <p class="text-[13px] text-muted font-medium line-clamp-2 mb-4 flex-1">${esc(f.desc)}</p>
+    <div class="flex items-center justify-between mt-auto pt-4 border-t border-stone-100">
      <span class="font-display font-bold text-lg text-deep">${f.price} ₽</span>
-     <button onclick="openFlavorModal('${f.id}')" class="btn2 !py-1.5 text-sm">Изменить</button>
+     <button onclick="openFlavorModal('${f.id}')" class="btn2 !py-1 !px-3 text-xs md:text-sm shadow-sm">Изменить</button>
     </div>
    </div>
-  </div>`).join('') || '<p class="text-muted font-semibold">Каталог пуст. Добавьте первый вкус.</p>';
+  </div>`).join('') || '<p class="text-muted font-semibold col-span-full">Каталог пуст. Добавьте первый вкус.</p>';
 }
 
 // Промокоды
@@ -348,8 +431,8 @@ const rnd = () => { const c = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; return 'CANELL
 function randomCode() { $('p-code').value = rnd(); }
 function promoText(p) { return (p.type === 'percent' ? `−${p.value}%` : `−${p.value} ₽`); }
 function updatePromoPreview() {
- const v = Number($('p-value').value) || 0, t =$('p-type').value;
- $('promoPreview').innerHTML = `Покупатель сэкономит <b class="text-gold">${t==='percent'?v+'%':v+' ₽'}</b> с заказа из 3 000 ₽: итого <b>${t==='percent'?Math.round(3000*(1-v/100)):Math.max(0,3000-v)} ₽</b>`;
+ const v = Number($('p-value').value) \vert{}\vert{} 0, t =$('p-type').value;
+ $('promoPreview').innerHTML = `Экономия <b class="text-gold">${t==='percent'?v+'%':v+' ₽'}</b> (с заказа 3 000 ₽: <b>${t==='percent'?Math.round(3000*(1-v/100)):Math.max(0,3000-v)} ₽</b>)`;
 }
 
 function addPromo() {
@@ -359,7 +442,7 @@ function addPromo() {
  if (db.promos.some(p => p.code === code)) return err('Такой код уже есть');
  if (!(value > 0)) return err('Размер скидки должен быть больше нуля');
  if (type === 'percent' && value > 100) return err('Процент не может быть больше 100');
- db.promos.unshift({ code, type, value, min: Number($('p-min').value) || 0, exp:$('p-exp').value, first: $('p-first').checked, active: true });$('p-code').value = ''; $('p-exp').value = '';$('p-first').checked = false;
+ db.promos.unshift({ code, type, value, min: Number($('p-min').value) \vert{}\vert{} 0, exp:$('p-exp').value, first: $('p-first').checked, active: true });$('p-code').value = ''; $('p-exp').value = '';$('p-first').checked = false;
  renderAll();
 }
 
@@ -369,15 +452,15 @@ function renderPromos() {
   const st = expired ? 'Истёк' : p.active ? 'Активен' : 'Выключен';
   const stCls = expired ? 'bg-stone-200 text-stone-600' : p.active ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800';
   const rules = [p.min ? `от ${p.min} ₽` : 'без минимума', p.first ? 'первый заказ' : 'любой заказ', p.exp ? `до ${p.exp.split('-').reverse().join('.')}` : 'бессрочно'].join(', ');
-  return `<div class="card p-5 flex items-center gap-4 ${p.active && !expired ? '' : 'opacity-70'}">
-   <div class="w-20 h-20 rounded-2xl bg-deep text-gold flex items-center justify-center font-display font-bold text-lg shrink-0">${promoText(p)}</div>
+  return `<div class="card p-4 md:p-5 flex flex-col sm:flex-row sm:items-center gap-4 ${p.active && !expired ? '' : 'opacity-60 grayscale-[50%]'}">
+   <div class="w-full sm:w-20 h-16 sm:h-20 rounded-xl bg-deep text-gold flex items-center justify-center font-display font-bold text-xl sm:text-lg shrink-0">${promoText(p)}</div>
    <div class="flex-1 min-w-0">
-    <div class="flex items-center gap-2 mb-1"><span class="font-mono font-bold text-lg truncate">${esc(p.code)}</span><span class="text-xs font-bold px-2 py-0.5 rounded-full ${stCls}">${st}</span></div>
-    <div class="text-sm text-muted font-semibold">${rules}</div>
+    <div class="flex items-center gap-2 mb-1.5"><span class="font-mono font-bold text-lg text-deep truncate">${esc(p.code)}</span><span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full ${stCls}">${st}</span></div>
+    <div class="text-[13px] text-muted font-medium">${rules}</div>
    </div>
-   <div class="flex flex-col gap-1.5 items-end">
-    <button onclick="togglePromo(${i})" class="btn2 !py-1 !px-3 text-sm">${p.active ? 'Выключить' : 'Включить'}</button>
-    <button onclick="deletePromo(${i})" class="text-red-600 font-bold text-sm hover:underline">Удалить</button>
+   <div class="flex sm:flex-col flex-row gap-2 sm:gap-1.5 justify-between items-center sm:items-end w-full sm:w-auto pt-3 sm:pt-0 border-t sm:border-t-0 border-stone-100 mt-2 sm:mt-0">
+    <button onclick="togglePromo(${i})" class="btn2 !py-1.5 !px-4 sm:!px-3 text-sm flex-1 sm:flex-none">${p.active ? 'Выключить' : 'Включить'}</button>
+    <button onclick="deletePromo(${i})" class="text-red-500 font-bold text-sm hover:underline px-2 sm:px-0">Удалить</button>
    </div></div>`;
  }).join('') || '<div class="card p-8 text-center text-muted font-semibold">Промокодов пока нет. Создайте первый в форме слева.</div>';
 }
@@ -385,10 +468,10 @@ function renderPromos() {
 function togglePromo(i) { db.promos[i].active = !db.promos[i].active; renderAll(); }
 function deletePromo(i) { if (confirm('Удалить промокод ' + db.promos[i].code + '?')) { db.promos.splice(i, 1); renderAll(); } }
 
-// Редактирование вкусов
+// Вкусы (Модальное окно)
 $('modal-color').addEventListener('input', e =>$('modal-color-hex').textContent = e.target.value);
 function previewModalImg() {
- const f = { image: $('modal-image').value, name: '', color: $('modal-color').value };$('modal-preview').innerHTML = f.image ? imgTag(f, 'w-full h-full object-contain') : '';
+ const f = { image: $('modal-image').value, name: '', color: $('modal-color').value };$('modal-preview').innerHTML = f.image ? imgTag(f, 'w-full h-full object-contain p-2') : '';
 }
 
 function openFlavorModal(id = null) {
@@ -398,9 +481,13 @@ function openFlavorModal(id = null) {
  ['name','watermark','desc','price','badge','color','image'].forEach(k => $('modal-'+k).value = f[k]);$('modal-color-hex').textContent = f.color;
  previewModalImg();
  $('flavorModal').classList.remove('hide');
+ document.body.style.overflow = 'hidden'; // Блокируем скролл фона
 }
 
-function closeFlavorModal() { $('flavorModal').classList.add('hide'); }
+function closeFlavorModal() { 
+  $('flavorModal').classList.add('hide'); 
+  document.body.style.overflow = '';
+}
 
 function saveFlavorModal() {
  if (!$('modal-name').value.trim()) {$('modal-name').focus(); return; }
@@ -429,58 +516,52 @@ function deleteFlavor() {
  }
 }
 
-// СОХРАНЕНИЕ В GITHUB ЧЕРЕЗ WORKER
+// СОХРАНЕНИЕ
 async function saveAllData() {
   const s = db.settings;
   s.freeDeliveryThreshold = Math.max(0, Number($('setting-freeDelivery').value) || 0);
-  s.standardDeliveryCost = Math.max(0, Number($('setting-costDelivery').value) || 0);
-  ['promo1Title','promo1Desc','promo2Title','promo2Desc','promo2Badge'].forEach(k => s[k] = $('setting-'+k).value);
+  s.standardDeliveryCost = Math.max(0, Number($('setting-costDelivery').value) \vert{}\vert{} 0); ['promo1Title','promo1Desc','promo2Title','promo2Desc','promo2Badge'].forEach(k => s[k] =$('setting-'+k).value);
 
   const btn = $('saveBtn');
   btn.disabled = true;
-  btn.textContent = 'Сохранение...';
+  btn.innerHTML = '<span class="hidden sm:inline">Сохранение...</span><span class="sm:hidden">Сохранение</span>';
 
   try {
     if (localMode) {
       localStorage.setItem(LOCAL_DATA_KEY, JSON.stringify(db));
       renderStats();
       const indicator = $('saveIndicator');
-      indicator.textContent = 'Сохранено на этом устройстве';
-      indicator.classList.remove('opacity-0');
+      indicator.textContent = 'Сохранено (локально)';
+      indicator.classList.remove('opacity-0', 'hidden');
       setTimeout(() => indicator.classList.add('opacity-0'), 2500);
       return;
     }
 
     const res = await fetch(`${API_BASE}/api/content`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${authToken}`
-      },
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
       body: JSON.stringify(db)
     });
 
     if (res.ok) {
       const indicator = $('saveIndicator');
       indicator.textContent = 'Сохранено в GitHub';
-      indicator.classList.remove('opacity-0');
+      indicator.classList.remove('opacity-0', 'hidden');
       setTimeout(() => indicator.classList.add('opacity-0'), 2500);
       renderStats();
     } else if (res.status === 401) {
       logout();
       alert('Сессия истекла. Войдите снова.');
     } else {
-      const details = await res.text().catch(() => '');
-      alert('Ошибка сохранения (' + res.status + '). ' + details.slice(0, 250));
+      alert('Ошибка сохранения (' + res.status + ')');
     }
   } catch (e) {
-    alert(localMode ? 'Не удалось сохранить данные на этом устройстве.' : 'Сетевая ошибка при обращении к Worker.');
+    alert(localMode ? 'Не удалось сохранить данные.' : 'Сетевая ошибка.');
   } finally {
     btn.disabled = false;
-    btn.textContent = 'Сохранить изменения';
+    btn.innerHTML = '<span class="hidden sm:inline">Сохранить изменения</span><span class="sm:hidden">Сохранить</span>';
   }
 }
-
 </script>
 </body>
 </html>
