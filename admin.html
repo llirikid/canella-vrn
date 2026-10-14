@@ -14,19 +14,22 @@ tailwind.config={theme:{extend:{colors:{deep:'#3B0A17',wine:'#4D1121',gold:'#C9A
 <style>
 body{background:#FBF7F4;color:#1E1416;font-weight:500}
 .hide{display:none!important}
-.f{width:100%;padding:.65rem .85rem;background:#fff;border:1.5px solid #E7DDD8;border-radius:.75rem;font-weight:600;outline:none;transition:border-color .15s; font-size:16px}
+.f{width:100%;padding:.65rem .85rem;background:#fff;border:1.5px solid #E7DDD8;border-radius:.75rem;font-weight:600;outline:none;transition:border-color .15s;font-size:16px}
 .f:focus{border-color:#3B0A17}
 .lbl{display:block;font-size:.75rem;font-weight:700;color:#7A6B6E;margin-bottom:.35rem}
-.btn{background:#3B0A17;color:#fff;font-weight:700;padding:.75rem 1.1rem;border-radius:.75rem;transition:background .15s; display:inline-flex; align-items:center; justify-content:center; text-align:center;}
+.btn{background:#3B0A17;color:#fff;font-weight:700;padding:.75rem 1.1rem;border-radius:.75rem;transition:background .15s;display:inline-flex;align-items:center;justify-content:center;text-align:center}
 .btn:hover{background:#5E1829}
-.btn2{background:#fff;border:1.5px solid #E7DDD8;font-weight:700;padding:.65rem 1rem;border-radius:.75rem; display:inline-flex; align-items:center; justify-content:center; text-align:center;}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.btn2{background:#fff;border:1.5px solid #E7DDD8;font-weight:700;padding:.65rem 1rem;border-radius:.75rem;display:inline-flex;align-items:center;justify-content:center;text-align:center}
 .btn2:hover{border-color:#3B0A17}
 .card{background:#fff;border:1.5px solid #EFE6E1;border-radius:1.25rem}
-.nav{display:flex;align-items:center;gap:.75rem;width:100%;padding:.8rem 1rem;border-radius:.85rem;font-weight:700;color:#cdb9bd;text-align:left; transition:all .2s;}
+.nav{display:flex;align-items:center;gap:.75rem;width:100%;padding:.8rem 1rem;border-radius:.85rem;font-weight:700;color:#cdb9bd;text-align:left;transition:all .2s}
 .nav:hover{background:rgba(255,255,255,.07);color:#fff}
 .nav.on{background:#C9A24B;color:#3B0A17}
 .chip{font-size:.7rem;font-weight:800;padding:.2rem .55rem;border-radius:999px;background:#F3E9D2;color:#6b4e12}
 :focus-visible{outline:2px solid #C9A24B;outline-offset:2px}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.animate-slide-up{animation:slideUp .3s cubic-bezier(0.16,1,0.3,1) forwards}
 </style>
 </head>
 <body class="h-screen overflow-hidden text-[15px] flex flex-col md:flex-row">
@@ -49,7 +52,7 @@ body{background:#FBF7F4;color:#1E1416;font-weight:500}
 <aside id="sidebar" class="fixed md:static inset-y-0 left-0 z-50 w-64 bg-deep flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-300 shrink-0 shadow-xl md:shadow-none hide">
   <div class="h-16 md:h-20 flex items-center justify-between px-6 shrink-0 border-b border-white/5 md:border-transparent">
     <h2 class="font-display font-bold text-xl text-white">CANELLA<span class="text-gold">.</span></h2>
-    <button onclick="toggleMobileMenu()" class="md:hidden text-white/50 hover:text-white p-2 text-2xl leading-none">×</button>
+    <button onclick="toggleMobileMenu()" class="md:hidden text-white/50 hover:text-white p-2 text-2xl leading-none" aria-label="Закрыть меню">×</button>
   </div>
   <nav class="flex-1 px-4 py-4 space-y-1.5 overflow-y-auto">
     <button class="nav on" id="tab-catalog" onclick="switchTab('catalog')">
@@ -75,20 +78,18 @@ body{background:#FBF7F4;color:#1E1416;font-weight:500}
 
 <!-- ОСНОВНАЯ ОБЛАСТЬ -->
 <main id="mainContent" class="flex-1 flex flex-col h-full overflow-hidden hide relative bg-[#FBF7F4]">
-  <!-- Мобильная шапка -->
   <header class="h-16 md:h-20 px-4 md:px-8 flex items-center justify-between shrink-0 bg-white md:bg-transparent border-b border-stone-200 md:border-none sticky top-0 z-30">
-    <div class="flex items-center gap-3">
-      <button onclick="toggleMobileMenu()" class="md:hidden p-2 -ml-2 text-deep" aria-label="Меню">
+    <div class="flex items-center gap-3 min-w-0">
+      <button onclick="toggleMobileMenu()" class="md:hidden p-2 -ml-2 text-deep shrink-0" aria-label="Меню">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
       </button>
-      <div>
-        <h1 id="pageTitle" class="font-display font-bold text-lg md:text-xl text-deep">Каталог вкусов</h1>
+      <div class="min-w-0">
+        <h1 id="pageTitle" class="font-display font-bold text-lg md:text-xl text-deep truncate">Каталог вкусов</h1>
         <p class="text-muted font-semibold text-xs hidden sm:block">Управление сайтом Canella VRN</p>
       </div>
     </div>
-    
-    <div class="flex items-center gap-3">
-      <span id="saveIndicator" class="text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-1 rounded hidden md:block opacity-0 transition-opacity">Сохранено</span>
+    <div class="flex items-center gap-2 shrink-0">
+      <span id="saveIndicator" class="text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-1 rounded opacity-0 transition-opacity whitespace-nowrap">Сохранено</span>
       <button id="saveBtn" onclick="saveAllData()" class="btn !py-2 !px-3 md:!px-5 text-sm">
         <span class="hidden sm:inline">Сохранить изменения</span>
         <span class="sm:hidden">Сохранить</span>
@@ -97,7 +98,6 @@ body{background:#FBF7F4;color:#1E1416;font-weight:500}
   </header>
 
   <div class="flex-1 overflow-y-auto p-4 md:p-8 pt-4 md:pt-0">
-    <!-- Статистика -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8" id="stats"></div>
 
     <!-- ВКЛАДКА: КАТАЛОГ -->
@@ -142,7 +142,7 @@ body{background:#FBF7F4;color:#1E1416;font-weight:500}
       </div>
     </section>
 
-    <!-- ВКЛАДКА: МАРКЕТИНГ И ДОСТАВКА -->
+    <!-- ВКЛАДКА: МАРКЕТИНГ -->
     <section id="view-marketing" class="hide space-y-5 md:space-y-6 max-w-3xl mx-auto lg:mx-0">
       <div class="card p-5 md:p-6">
         <h3 class="font-display font-semibold mb-4 text-sm md:text-base">Доставка</h3>
@@ -185,17 +185,14 @@ body{background:#FBF7F4;color:#1E1416;font-weight:500}
 </main>
 
 <!-- МОДАЛЬНОЕ ОКНО: РЕДАКТИРОВАНИЕ ВКУСА -->
-<div id="flavorModal" class="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4 hide transition-opacity">
+<div id="flavorModal" class="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4 hide">
   <div class="bg-white w-full max-w-xl sm:rounded-3xl rounded-t-3xl overflow-hidden max-h-[90vh] sm:max-h-[95vh] flex flex-col shadow-2xl animate-slide-up sm:animate-none">
     <div class="px-5 py-4 flex justify-between items-center border-b border-stone-100 bg-stone-50 shrink-0">
       <h3 class="font-display font-semibold text-deep" id="modalTitle">Редактировать вкус</h3>
       <button onclick="closeFlavorModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-stone-200 text-stone-600 hover:bg-stone-300 transition-colors" aria-label="Закрыть">✕</button>
     </div>
-    
     <div class="p-5 sm:p-6 space-y-5 overflow-y-auto">
       <input type="hidden" id="modal-id">
-      
-      <!-- Блок фото -->
       <div class="flex flex-col sm:flex-row gap-4 items-center sm:items-start bg-cream p-4 rounded-2xl border border-stone-100">
         <div id="modal-preview" class="w-24 h-24 sm:w-20 sm:h-20 rounded-2xl shrink-0 overflow-hidden flex items-center justify-center bg-white shadow-sm border border-stone-200"></div>
         <div class="flex-1 w-full space-y-2 text-center sm:text-left">
@@ -203,17 +200,14 @@ body{background:#FBF7F4;color:#1E1416;font-weight:500}
           <input id="modal-image" class="f text-sm" placeholder="macaroon1.png" oninput="previewModalImg()">
         </div>
       </div>
-      
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div><label class="lbl">Название вкуса</label><input id="modal-name" class="f" placeholder="Например: Фисташка — малина"></div>
         <div><label class="lbl">Текст на фоне (Водяной знак)</label><input id="modal-watermark" class="f" placeholder="ФИСТАШКА"></div>
       </div>
-      
       <div>
         <label class="lbl">Описание (Состав)</label>
         <textarea id="modal-desc" rows="2" class="f resize-none text-sm leading-relaxed" placeholder="Насыщенный ганаш..."></textarea>
       </div>
-      
       <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 pb-2">
         <div><label class="lbl">Цена, ₽</label><input type="number" id="modal-price" class="f font-display"></div>
         <div><label class="lbl">Бейдж (Стикер)</label><input id="modal-badge" class="f" placeholder="Хит / Новинка"></div>
@@ -226,7 +220,6 @@ body{background:#FBF7F4;color:#1E1416;font-weight:500}
         </div>
       </div>
     </div>
-    
     <div class="px-5 py-4 border-t border-stone-100 flex justify-between items-center bg-stone-50 shrink-0">
       <button onclick="deleteFlavor()" id="modal-btn-delete" class="text-red-600 font-bold hover:underline text-sm py-2 px-1">Удалить</button>
       <div class="flex gap-2 ml-auto">
@@ -236,12 +229,6 @@ body{background:#FBF7F4;color:#1E1416;font-weight:500}
     </div>
   </div>
 </div>
-
-<style>
-  /* Анимация появления модалки снизу на мобильных */
-  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-  .animate-slide-up { animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-</style>
 
 <script>
 // === ПОДКЛЮЧЕНИЕ CLOUDFLARE WORKERS ===
@@ -272,7 +259,6 @@ function toggleMobileMenu() {
   const sidebar = $('sidebar');
   const overlay = $('mobileMenuOverlay');
   const isOpen = !sidebar.classList.contains('-translate-x-full');
-  
   if (isOpen) {
     sidebar.classList.add('-translate-x-full');
     overlay.classList.add('hide');
@@ -290,11 +276,11 @@ async function checkPassword() {
       authToken = 'local-session';
       localStorage.setItem('canella_worker_auth', authToken);
       $('loginScreen').classList.add('hide');
-      $('sidebar').classList.remove('hide');$('mainContent').classList.remove('hide');
+      $('sidebar').classList.remove('hide');
+      $('mainContent').classList.remove('hide');
       await loadDataFromWorker();
       return;
     }
-
     const res = await fetch(`${API_BASE}/api/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -302,11 +288,11 @@ async function checkPassword() {
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok || !data.success || !data.token) return showLoginError();
-
     authToken = data.token;
     localStorage.setItem('canella_worker_auth', authToken);
     $('loginScreen').classList.add('hide');
-    $('sidebar').classList.remove('hide');$('mainContent').classList.remove('hide');
+    $('sidebar').classList.remove('hide');
+    $('mainContent').classList.remove('hide');
     await loadDataFromWorker();
   } catch (e) {
     showLoginError('Нет связи с сервером. Проверьте API_BASE.');
@@ -323,15 +309,19 @@ function showLoginError(msg) {
 function logout() {
  authToken = null;
  localStorage.removeItem('canella_worker_auth');
- $('adminPassword').value = '';$('loginScreen').classList.remove('hide');
- $('sidebar').classList.add('hide');$('mainContent').classList.add('hide');
+ $('adminPassword').value = '';
+ $('loginScreen').classList.remove('hide');
+ $('sidebar').classList.add('hide');
+ $('mainContent').classList.add('hide');
 }
+
 $('adminPassword').addEventListener('keydown', e => { if (e.key === 'Enter') checkPassword(); });
 
 window.addEventListener('DOMContentLoaded', async () => {
  if (authToken) {
   $('loginScreen').classList.add('hide');
-  $('sidebar').classList.remove('hide');$('mainContent').classList.remove('hide');
+  $('sidebar').classList.remove('hide');
+  $('mainContent').classList.remove('hide');
   await loadDataFromWorker();
  }
 });
@@ -347,7 +337,6 @@ async function loadDataFromWorker() {
     init();
     return;
   }
-
   try {
     const res = await fetch(`${API_BASE}/api/content`, {
       headers: { 'Authorization': `Bearer ${authToken}` }
@@ -374,10 +363,16 @@ async function loadDataFromWorker() {
 const titles = {catalog:'Каталог вкусов',promos:'Промокоды',marketing:'Доставка и акции'};
 function switchTab(t) {
  Object.keys(titles).forEach(k => {
-  $('view-'+k).classList.toggle('hide', k !== t);$('tab-'+k).classList.toggle('on', k === t);
+  $('view-'+k).classList.toggle('hide', k !== t);
+  $('tab-'+k).classList.toggle('on', k === t);
  });
  $('pageTitle').textContent = titles[t];
- if (window.innerWidth < 768) toggleMobileMenu(); // Закрываем меню на мобилках после клика
+ if (window.innerWidth < 768) {
+   const sidebar = $('sidebar');
+   if (!sidebar.classList.contains('-translate-x-full')) {
+     toggleMobileMenu();
+   }
+ }
 }
 
 function init() {
@@ -431,18 +426,19 @@ const rnd = () => { const c = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; return 'CANELL
 function randomCode() { $('p-code').value = rnd(); }
 function promoText(p) { return (p.type === 'percent' ? `−${p.value}%` : `−${p.value} ₽`); }
 function updatePromoPreview() {
- const v = Number($('p-value').value) \vert{}\vert{} 0, t =$('p-type').value;
+ const v = Number($('p-value').value) || 0, t = $('p-type').value;
  $('promoPreview').innerHTML = `Экономия <b class="text-gold">${t==='percent'?v+'%':v+' ₽'}</b> (с заказа 3 000 ₽: <b>${t==='percent'?Math.round(3000*(1-v/100)):Math.max(0,3000-v)} ₽</b>)`;
 }
 
 function addPromo() {
- const code = $('p-code').value.trim().toUpperCase().replace(/\s+/g,''), value = Number($('p-value').value), type =$('p-type').value;
+ const code = $('p-code').value.trim().toUpperCase().replace(/\s+/g,''), value = Number($('p-value').value), type = $('p-type').value;
  const err = m => { const e = $('p-err'); e.textContent = m; e.classList.remove('hide'); setTimeout(() => e.classList.add('hide'), 3500); };
  if (!code) return err('Введите код или нажмите «Случайный»');
  if (db.promos.some(p => p.code === code)) return err('Такой код уже есть');
  if (!(value > 0)) return err('Размер скидки должен быть больше нуля');
  if (type === 'percent' && value > 100) return err('Процент не может быть больше 100');
- db.promos.unshift({ code, type, value, min: Number($('p-min').value) \vert{}\vert{} 0, exp:$('p-exp').value, first: $('p-first').checked, active: true });$('p-code').value = ''; $('p-exp').value = '';$('p-first').checked = false;
+ db.promos.unshift({ code, type, value, min: Number($('p-min').value) || 0, exp: $('p-exp').value, first: $('p-first').checked, active: true });
+ $('p-code').value = ''; $('p-exp').value = ''; $('p-first').checked = false;
  renderAll();
 }
 
@@ -469,28 +465,32 @@ function togglePromo(i) { db.promos[i].active = !db.promos[i].active; renderAll(
 function deletePromo(i) { if (confirm('Удалить промокод ' + db.promos[i].code + '?')) { db.promos.splice(i, 1); renderAll(); } }
 
 // Вкусы (Модальное окно)
-$('modal-color').addEventListener('input', e =>$('modal-color-hex').textContent = e.target.value);
+$('modal-color').addEventListener('input', e => $('modal-color-hex').textContent = e.target.value);
+
 function previewModalImg() {
- const f = { image: $('modal-image').value, name: '', color: $('modal-color').value };$('modal-preview').innerHTML = f.image ? imgTag(f, 'w-full h-full object-contain p-2') : '';
+ const f = { image: $('modal-image').value, name: '', color: $('modal-color').value };
+ $('modal-preview').innerHTML = f.image ? imgTag(f, 'w-full h-full object-contain p-2') : '';
 }
 
 function openFlavorModal(id = null) {
  const f = id ? db.flavors.find(x => x.id === id) : { id: '', name: '', watermark: '', desc: '', price: 200, badge: 'Новинка', color: '#EFA9BB', image: '' };
  $('modalTitle').textContent = id ? 'Редактировать вкус' : 'Новый вкус';
- $('modal-btn-delete').classList.toggle('hide', !id);$('modal-id').value = f.id;
- ['name','watermark','desc','price','badge','color','image'].forEach(k => $('modal-'+k).value = f[k]);$('modal-color-hex').textContent = f.color;
+ $('modal-btn-delete').classList.toggle('hide', !id);
+ $('modal-id').value = f.id;
+ ['name','watermark','desc','price','badge','color','image'].forEach(k => $('modal-'+k).value = f[k]);
+ $('modal-color-hex').textContent = f.color;
  previewModalImg();
  $('flavorModal').classList.remove('hide');
- document.body.style.overflow = 'hidden'; // Блокируем скролл фона
+ document.body.style.overflow = 'hidden';
 }
 
-function closeFlavorModal() { 
-  $('flavorModal').classList.add('hide'); 
+function closeFlavorModal() {
+  $('flavorModal').classList.add('hide');
   document.body.style.overflow = '';
 }
 
 function saveFlavorModal() {
- if (!$('modal-name').value.trim()) {$('modal-name').focus(); return; }
+ if (!$('modal-name').value.trim()) { $('modal-name').focus(); return; }
  const id = $('modal-id').value;
  const d = {
   id: id || 'f' + Date.now(),
@@ -520,7 +520,8 @@ function deleteFlavor() {
 async function saveAllData() {
   const s = db.settings;
   s.freeDeliveryThreshold = Math.max(0, Number($('setting-freeDelivery').value) || 0);
-  s.standardDeliveryCost = Math.max(0, Number($('setting-costDelivery').value) \vert{}\vert{} 0); ['promo1Title','promo1Desc','promo2Title','promo2Desc','promo2Badge'].forEach(k => s[k] =$('setting-'+k).value);
+  s.standardDeliveryCost = Math.max(0, Number($('setting-costDelivery').value) || 0);
+  ['promo1Title','promo1Desc','promo2Title','promo2Desc','promo2Badge'].forEach(k => s[k] = $('setting-'+k).value);
 
   const btn = $('saveBtn');
   btn.disabled = true;
@@ -532,7 +533,7 @@ async function saveAllData() {
       renderStats();
       const indicator = $('saveIndicator');
       indicator.textContent = 'Сохранено (локально)';
-      indicator.classList.remove('opacity-0', 'hidden');
+      indicator.classList.remove('opacity-0');
       setTimeout(() => indicator.classList.add('opacity-0'), 2500);
       return;
     }
@@ -546,7 +547,7 @@ async function saveAllData() {
     if (res.ok) {
       const indicator = $('saveIndicator');
       indicator.textContent = 'Сохранено в GitHub';
-      indicator.classList.remove('opacity-0', 'hidden');
+      indicator.classList.remove('opacity-0');
       setTimeout(() => indicator.classList.add('opacity-0'), 2500);
       renderStats();
     } else if (res.status === 401) {
