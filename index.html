@@ -190,6 +190,7 @@
         </nav>
         <div class="mt-auto text-sm text-white/70 space-y-1">
             <a href="https://t.me/grechkinasd" target="_blank" rel="noopener" class="block hover:text-canella-gold">Telegram: @grechkinasd</a>
+            <a href="https://max.ru/u/f9LHodD0cOKY7GxP-9G1ev9-03qzMNK2Cw-euo1HSmJ7F88HbhNHY_ggtNA" target="_blank" rel="noopener" class="block hover:text-canella-gold">MAX: написать нам</a>
             <p>Воронеж, ежедневно с 9:00 до 21:00</p>
         </div>
     </aside>
@@ -369,6 +370,7 @@
                 <div><dt class="text-canella-gold text-xs">Адрес</dt><dd>Воронеж, центр. Самовывоз и курьер</dd></div>
                 <div><dt class="text-canella-gold text-xs">Телефон</dt><dd><a href="tel:+79009284515" class="hover:text-canella-gold">+7 900 928 45 15</a></dd></div>
                 <div><dt class="text-canella-gold text-xs">Telegram</dt><dd><a href="https://t.me/grechkinasd" target="_blank" rel="noopener" class="hover:text-canella-gold">@grechkinasd</a></dd></div>
+                <div><dt class="text-canella-gold text-xs">MAX</dt><dd><a href="https://max.ru/u/f9LHodD0cOKY7GxP-9G1ev9-03qzMNK2Cw-euo1HSmJ7F88HbhNHY_ggtNA" target="_blank" rel="noopener" class="hover:text-canella-gold">Написать в MAX</a></dd></div>
                 <div><dt class="text-canella-gold text-xs">Часы работы</dt><dd>Ежедневно с 9:00 до 21:00</dd></div>
             </dl>
         </div>
@@ -434,10 +436,25 @@
                     </div>
 
                     <button id="checkoutBtn" class="btn w-full">Оформить заказ в Telegram</button>
+                    <button id="checkoutMaxBtn" type="button" class="w-full inline-flex items-center justify-center px-6 py-3.5 text-sm font-medium border border-stone-300 text-stone-700 bg-white hover:border-canella-maroon hover:text-canella-maroon transition-colors">Не получается в Telegram? Написать в MAX</button>
                     <p class="text-xs text-stone-500 text-center">Менеджер согласует удобное время доставки в Воронеже.</p>
                 </div>
 
             </div>
+        </div>
+    </div>
+
+    <!-- Окно заказа через MAX -->
+    <div id="maxModal" class="hidden fixed inset-0 z-[70] bg-black/60 flex items-end sm:items-center justify-center sm:p-4" role="dialog" aria-modal="true" aria-labelledby="maxModalTitle">
+        <div class="bg-white w-full max-w-md sm:rounded-2xl rounded-t-2xl p-6 sm:p-8 text-center shadow-2xl" style="padding-bottom:max(1.5rem,env(safe-area-inset-bottom))">
+            <div class="mx-auto mb-4 w-14 h-14 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <h3 id="maxModalTitle" class="font-display text-xl text-stone-900 mb-2">Текст заказа скопирован</h3>
+            <p id="maxModalHint" class="text-sm text-stone-600 leading-relaxed mb-5">Нажмите «Перейти в MAX», откройте чат и вставьте текст в сообщение. Отправьте его <b>без изменений</b>, так менеджер сразу увидит ваш заказ.</p>
+            <a id="maxGoBtn" href="https://max.ru/u/f9LHodD0cOKY7GxP-9G1ev9-03qzMNK2Cw-euo1HSmJ7F88HbhNHY_ggtNA" target="_blank" rel="noopener" class="btn w-full mb-3">Перейти в MAX</a>
+            <button id="maxCopyAgainBtn" type="button" class="w-full text-sm font-semibold text-canella-maroon py-2 hover:underline">Скопировать текст ещё раз</button>
+            <button id="maxCloseBtn" type="button" class="w-full text-sm text-stone-500 py-2 hover:underline">Закрыть</button>
         </div>
     </div>
 
@@ -823,8 +840,7 @@
 
             document.getElementById('applyPromoBtn').addEventListener('click', applyPromoCode);
 
-            document.getElementById('checkoutBtn').addEventListener('click', () => {
-                if (cart.length === 0) { showToast('Ваша корзина пуста'); return; }
+            function buildOrderText() {
                 const subtotal = cart.reduce((s, i) => s + i.price * i.count, 0);
                 
                 let discount = 0;
@@ -853,9 +869,55 @@
                 if (discount) lines.push(`Скидка: -${discount} ₽ (${appliedPromo.code})`);
                 lines.push(`Доставка: ${delivery ? delivery + ' ₽' : 'бесплатно'}`, `Итого к оплате: ${total} ₽`, '', 'Город: Воронеж. Адрес и время доставки уточню в чате.');
                 
-                const url = 'https://t.me/grechkinasd?text=' + encodeURIComponent(lines.join('\n'));
+                return lines.join('\n');
+            }
+
+            document.getElementById('checkoutBtn').addEventListener('click', () => {
+                if (cart.length === 0) { showToast('Ваша корзина пуста'); return; }
+                const url = 'https://t.me/grechkinasd?text=' + encodeURIComponent(buildOrderText());
                 if (!window.open(url, '_blank')) window.location.href = url;
             });
+
+            // MAX: автовставки текста нет, поэтому копируем заказ в буфер обмена
+            async function copyText(text) {
+                try {
+                    if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(text); return true; }
+                } catch (e) {}
+                try {
+                    const ta = document.createElement('textarea');
+                    ta.value = text; ta.setAttribute('readonly', '');
+                    ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;font-size:16px';
+                    document.body.appendChild(ta);
+                    ta.focus(); ta.select(); ta.setSelectionRange(0, text.length);
+                    const ok = document.execCommand('copy');
+                    document.body.removeChild(ta);
+                    return ok;
+                } catch (e) { return false; }
+            }
+
+            const maxModal = document.getElementById('maxModal');
+            let maxOrderText = '';
+            const setMaxCopied = ok => {
+                document.getElementById('maxModalTitle').textContent = ok ? 'Текст заказа скопирован' : 'Не удалось скопировать автоматически';
+                document.getElementById('maxModalHint').innerHTML = ok
+                    ? 'Нажмите «Перейти в MAX», откройте чат и вставьте текст в сообщение. Отправьте его <b>без изменений</b>, так менеджер сразу увидит ваш заказ.'
+                    : 'Нажмите «Скопировать текст ещё раз». Если не получится, напишите в MAX заказ вручную.';
+            };
+            document.getElementById('checkoutMaxBtn').addEventListener('click', async () => {
+                if (cart.length === 0) { showToast('Ваша корзина пуста'); return; }
+                maxOrderText = buildOrderText();
+                const ok = await copyText(maxOrderText);
+                setMaxCopied(ok);
+                maxModal.classList.remove('hidden');
+            });
+            document.getElementById('maxCopyAgainBtn').addEventListener('click', async () => {
+                const ok = await copyText(maxOrderText);
+                setMaxCopied(ok);
+                if (ok) showToast('Текст заказа скопирован');
+            });
+            const closeMax = () => maxModal.classList.add('hidden');
+            document.getElementById('maxCloseBtn').addEventListener('click', closeMax);
+            maxModal.addEventListener('click', e => { if (e.target === maxModal) closeMax(); });
         }
 
         function addToCart(flavorId) {
