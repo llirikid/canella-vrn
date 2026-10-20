@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Canella VRN — Панель управления</title>
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
@@ -18,74 +18,89 @@
 tailwind.config={theme:{extend:{colors:{deep:'#3B0A17',wine:'#4D1121',gold:'#C9A24B',cream:'#FBF7F4',ink:'#1E1416',muted:'#7A6B6E'},fontFamily:{sans:['Manrope','sans-serif'],display:['Unbounded','sans-serif']}}}}
 </script>
 <style>
-body{background:#FBF7F4;color:#1E1416;font-weight:500}
+html,body{height:100%}
+body{background:#FBF7F4;color:#1E1416;font-weight:500;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
+button,input,select,textarea{font-family:inherit}
 .hide{display:none!important}
-.f{width:100%;padding:.65rem .85rem;background:#fff;border:1.5px solid #E7DDD8;border-radius:.75rem;font-weight:600;outline:none;transition:border-color .15s}
+.f{width:100%;min-height:46px;font-size:16px;padding:.65rem .85rem;background:#fff;border:1.5px solid #E7DDD8;border-radius:.75rem;font-weight:600;outline:none;transition:border-color .15s}
 .f:focus{border-color:#3B0A17}
 .lbl{display:block;font-size:.75rem;font-weight:700;color:#7A6B6E;margin-bottom:.35rem}
-.btn{background:#3B0A17;color:#fff;font-weight:700;padding:.65rem 1.1rem;border-radius:.75rem;transition:background .15s}
+.btn{min-height:46px;background:#3B0A17;color:#fff;font-weight:700;padding:.65rem 1.1rem;border-radius:.75rem;transition:background .15s}
 .btn:hover{background:#5E1829}
-.btn2{background:#fff;border:1.5px solid #E7DDD8;font-weight:700;padding:.6rem 1rem;border-radius:.75rem}
+.btn2{min-height:44px;background:#fff;border:1.5px solid #E7DDD8;font-weight:700;padding:.6rem 1rem;border-radius:.75rem}
 .btn2:hover{border-color:#3B0A17}
 .card{background:#fff;border:1.5px solid #EFE6E1;border-radius:1.25rem}
 .nav{display:flex;align-items:center;gap:.75rem;width:100%;padding:.8rem 1rem;border-radius:.85rem;font-weight:700;color:#cdb9bd;text-align:left}
+.nav:active{opacity:.8}
+@media(max-width:767px){
+ .nav{flex-direction:column;justify-content:center;gap:.15rem;padding:.55rem .25rem;font-size:.68rem;text-align:center;border-radius:.75rem;flex:1}
+ .nav svg{width:22px;height:22px}
+ .btn2.sm,.btn2{padding:.55rem .85rem}
+ .promo-card{flex-wrap:wrap}
+}
+.nav svg{flex-shrink:0}
+.safe-b{padding-bottom:env(safe-area-inset-bottom,0px)}
+.safe-t{padding-top:env(safe-area-inset-top,0px)}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(88px + env(safe-area-inset-bottom,0px));z-index:70;pointer-events:none}
+@media(min-width:768px){#toast{bottom:24px}}
 .nav:hover{background:rgba(255,255,255,.07);color:#fff}
 .nav.on{background:#C9A24B;color:#3B0A17}
 .chip{font-size:.7rem;font-weight:800;padding:.2rem .55rem;border-radius:999px;background:#F3E9D2;color:#6b4e12}
 :focus-visible{outline:2px solid #C9A24B;outline-offset:2px}
 </style>
 </head>
-<body class="h-screen overflow-hidden text-[15px] flex">
+<body class="overflow-hidden text-[15px] flex flex-col md:flex-row" style="height:100vh;height:100dvh">
 
 <div id="loginScreen" class="fixed inset-0 z-50 bg-deep flex items-center justify-center p-4">
-  <div class="bg-cream p-10 rounded-3xl max-w-sm w-full text-center">
+  <div class="bg-cream p-6 sm:p-10 rounded-3xl max-w-sm w-full text-center">
     <h1 class="font-display font-bold text-2xl text-deep mb-2">CANELLA<span class="text-gold">.</span></h1>
     <p class="text-muted font-semibold mb-8">Введите пароль, чтобы войти</p>
-    <input type="password" id="adminPassword" placeholder="Пароль" class="f mb-4">
+    <input type="password" id="adminPassword" placeholder="Пароль" autocomplete="current-password" class="f mb-4">
     <button onclick="checkPassword()" class="btn w-full">Войти</button>
     <p id="loginError" class="text-red-600 font-bold text-sm mt-3 hide">Неверный пароль</p>
   </div>
 </div>
 
-<aside id="sidebar" class="w-64 bg-deep flex flex-col hide shrink-0">
-  <div class="h-20 flex items-center px-7"><h2 class="font-display font-bold text-xl text-white">CANELLA<span class="text-gold">.</span></h2></div>
-  <nav class="flex-1 px-4 py-4 space-y-1.5">
-    <button class="nav on" id="tab-catalog" onclick="switchTab('catalog')">Каталог вкусов</button>
-    <button class="nav" id="tab-promos" onclick="switchTab('promos')">Промокоды</button>
-    <button class="nav" id="tab-marketing" onclick="switchTab('marketing')">Доставка и акции</button>
+<aside id="sidebar" class="order-last md:order-first fixed md:static bottom-0 inset-x-0 z-40 md:z-auto md:w-64 bg-deep flex md:flex-col hide shrink-0 safe-b border-t border-white/10 md:border-0">
+  <div class="hidden md:flex h-20 items-center px-7"><h2 class="font-display font-bold text-xl text-white">CANELLA<span class="text-gold">.</span></h2></div>
+  <nav class="flex-1 flex md:block px-2 md:px-4 py-1.5 md:py-4 gap-1 md:space-y-1.5">
+    <button class="nav on" id="tab-catalog" onclick="switchTab('catalog')"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg><span>Каталог</span></button>
+    <button class="nav" id="tab-promos" onclick="switchTab('promos')"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v8H4v-8M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 110-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 100-5C13 2 12 7 12 7z"/></svg><span>Промокоды</span></button>
+    <button class="nav" id="tab-marketing" onclick="switchTab('marketing')"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 3h15v13H1zM16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2"/><circle cx="18.5" cy="18.5" r="2"/></svg><span class="md:hidden">Доставка</span><span class="hidden md:inline">Доставка и акции</span></button>
+    <button onclick="logout()" class="nav md:hidden"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg><span>Выйти</span></button>
   </nav>
-  <div class="p-4"><button onclick="logout()" class="nav">Выйти</button></div>
+  <div class="hidden md:block p-4"><button onclick="logout()" class="nav">Выйти</button></div>
 </aside>
 
-<main id="mainContent" class="flex-1 flex flex-col h-full overflow-hidden hide">
-  <header class="h-20 px-8 flex items-center justify-between shrink-0">
-    <div>
-      <h1 id="pageTitle" class="font-display font-bold text-xl text-deep">Каталог вкусов</h1>
-      <p class="text-muted font-semibold text-sm">Управление сайтом Canella VRN</p>
-    </div>
-    <div class="flex items-center gap-3">
-      <span id="saveIndicator" class="text-sm font-bold text-emerald-700 bg-emerald-100 px-3 py-1.5 rounded-lg opacity-0 transition-opacity">Сохранено в GitHub</span>
-      <button id="saveBtn" onclick="saveAllData()" class="btn">Сохранить изменения</button>
+<main id="mainContent" class="flex-1 min-h-0 flex flex-col overflow-hidden hide">
+  <header class="safe-t shrink-0 bg-cream/95 backdrop-blur border-b border-stone-200/60 md:border-0">
+    <div class="min-h-[64px] md:h-20 px-4 md:px-8 flex items-center justify-between gap-3">
+      <div class="min-w-0">
+        <h1 id="pageTitle" class="font-display font-bold text-base md:text-xl text-deep truncate">Каталог вкусов</h1>
+        <p class="text-muted font-semibold text-xs md:text-sm hidden sm:block">Управление сайтом Canella VRN</p>
+      </div>
+      <button id="saveBtn" onclick="saveAllData()" class="btn shrink-0 !px-4 text-sm md:text-[15px]">Сохранить</button>
     </div>
   </header>
+  <div id="toast"><span id="saveIndicator" class="inline-block text-sm font-bold text-emerald-700 bg-emerald-100 px-4 py-2.5 rounded-xl shadow-lg opacity-0 transition-opacity">Сохранено</span></div>
 
-  <div class="flex-1 overflow-y-auto px-8 pb-16">
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8" id="stats"></div>
+  <div class="flex-1 overflow-y-auto overscroll-contain px-4 md:px-8 pt-4 md:pt-2 pb-28 md:pb-16">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8" id="stats"></div>
 
     <section id="view-catalog">
       <div class="flex justify-between items-center mb-4">
         <h3 class="font-display font-semibold text-base">Макаронс</h3>
         <button onclick="openFlavorModal()" class="btn2">Добавить вкус</button>
       </div>
-      <div id="flavorsGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5"></div>
+      <div id="flavorsGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-5"></div>
     </section>
 
     <section id="view-promos" class="hide">
       <div class="flex justify-between items-center mb-4">
         <h3 class="font-display font-semibold text-base">Ваши промокоды</h3>
       </div>
-      <div class="grid lg:grid-cols-5 gap-6 items-start">
-        <div class="card p-6 lg:col-span-2 space-y-4 lg:sticky lg:top-0">
+      <div class="grid lg:grid-cols-5 gap-4 md:gap-6 items-start">
+        <div class="card p-4 md:p-6 lg:col-span-2 space-y-4 lg:sticky lg:top-0">
           <h4 class="font-display font-semibold">Новый промокод</h4>
           <div>
             <label class="lbl">Код</label>
@@ -103,7 +118,7 @@ body{background:#FBF7F4;color:#1E1416;font-weight:500}
             <div><label class="lbl">Заказ от, ₽</label><input id="p-min" type="number" min="0" value="0" class="f"></div>
             <div><label class="lbl">Действует до</label><input id="p-exp" type="date" class="f"></div>
           </div>
-          <label class="flex items-center gap-2 font-bold"><input type="checkbox" id="p-first" class="w-4 h-4 accent-[#3B0A17]"> Только на первый заказ</label>
+          <label class="flex items-center gap-3 font-bold min-h-[44px]"><input type="checkbox" id="p-first" class="w-5 h-5 accent-[#3B0A17]"> Только на первый заказ</label>
           <div id="promoPreview" class="rounded-xl bg-deep text-white p-4 font-semibold"></div>
           <button onclick="addPromo()" class="btn w-full">Создать промокод</button>
           <p id="p-err" class="text-red-600 font-bold text-sm hide"></p>
@@ -113,14 +128,14 @@ body{background:#FBF7F4;color:#1E1416;font-weight:500}
     </section>
 
     <section id="view-marketing" class="hide space-y-6 max-w-3xl">
-      <div class="card p-6">
+      <div class="card p-4 md:p-6">
         <h3 class="font-display font-semibold mb-4">Доставка</h3>
-        <div class="grid grid-cols-2 gap-5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5">
           <div><label class="lbl">Бесплатная доставка от, ₽</label><input type="number" id="setting-freeDelivery" class="f"></div>
           <div><label class="lbl">Стоимость доставки, ₽</label><input type="number" id="setting-costDelivery" class="f"></div>
         </div>
       </div>
-      <div class="card p-6 space-y-5">
+      <div class="card p-4 md:p-6 space-y-5">
         <h3 class="font-display font-semibold">Акции на сайте</h3>
         <div class="p-4 rounded-xl bg-cream space-y-2">
           <h4 class="font-bold">Левый блок</h4>
@@ -139,35 +154,46 @@ body{background:#FBF7F4;color:#1E1416;font-weight:500}
   </div>
 </main>
 
-<div id="flavorModal" class="fixed inset-0 z-[60] bg-black/50 flex items-center justify-center p-4 hide">
-  <div class="bg-white w-full max-w-xl rounded-3xl overflow-hidden max-h-[92vh] flex flex-col">
-    <div class="px-6 py-4 flex justify-between items-center border-b border-stone-100">
+<div id="flavorModal" class="fixed inset-0 z-[60] bg-black/50 flex items-end sm:items-center justify-center sm:p-4 hide" onclick="if(event.target===this)closeFlavorModal()">
+  <div class="bg-white w-full max-w-xl rounded-t-3xl sm:rounded-3xl overflow-hidden flex flex-col" style="max-height:94vh;max-height:94dvh">
+    <div class="px-4 sm:px-6 py-2 sm:py-4 flex justify-between items-center border-b border-stone-100">
       <h3 class="font-display font-semibold" id="modalTitle">Редактировать вкус</h3>
-      <button onclick="closeFlavorModal()" class="text-2xl leading-none text-muted hover:text-ink" aria-label="Закрыть">×</button>
+      <button onclick="closeFlavorModal()" class="text-3xl leading-none text-muted hover:text-ink w-11 h-11 -mr-2 flex items-center justify-center" aria-label="Закрыть">×</button>
     </div>
-    <div class="p-6 space-y-4 overflow-y-auto">
+    <div class="p-4 sm:p-6 space-y-4 overflow-y-auto overscroll-contain">
       <input type="hidden" id="modal-id">
-      <div class="flex gap-4 items-center">
-        <div id="modal-preview" class="w-24 h-24 rounded-2xl shrink-0 overflow-hidden flex items-center justify-center bg-cream"></div>
-        <div class="flex-1 space-y-2">
-          <label class="lbl">Фото: имя файла или ссылка</label>
-          <input id="modal-image" class="f" placeholder="macaroon1.png" oninput="previewModalImg()">
+      <div>
+        <label class="lbl">Фото макаронса</label>
+        <div class="flex gap-4 items-center">
+          <div id="modal-preview" class="w-24 h-24 rounded-2xl shrink-0 overflow-hidden flex items-center justify-center bg-cream border border-stone-200"></div>
+          <div class="flex-1 min-w-0 space-y-2">
+            <input type="file" id="modal-file" accept="image/*" class="hidden" onchange="handleImageFile(this)">
+            <button type="button" onclick="$('modal-file').click()" class="btn w-full flex items-center justify-center gap-2">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+              <span id="uploadLabel">Выбрать фото</span>
+            </button>
+            <button type="button" id="modal-clear" onclick="clearModalImage()" class="text-sm font-bold text-red-600 hide">Убрать фото</button>
+          </div>
         </div>
+        <details class="mt-3">
+          <summary class="text-xs font-bold text-muted cursor-pointer py-1">Или указать имя файла / ссылку</summary>
+          <input id="modal-image" class="f mt-2" placeholder="macaroon1.png" oninput="previewModalImg()">
+        </details>
       </div>
-      <div class="grid grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div><label class="lbl">Название</label><input id="modal-name" class="f"></div>
         <div><label class="lbl">Слово на фоне</label><input id="modal-watermark" class="f"></div>
       </div>
       <div><label class="lbl">Состав</label><textarea id="modal-desc" rows="2" class="f resize-none"></textarea></div>
-      <div class="grid grid-cols-3 gap-4">
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
         <div><label class="lbl">Цена, ₽</label><input type="number" id="modal-price" class="f"></div>
         <div><label class="lbl">Бейдж</label><input id="modal-badge" class="f" placeholder="Хит"></div>
-        <div><label class="lbl">Цвет</label>
-          <div class="flex items-center gap-2"><input type="color" id="modal-color" class="w-11 h-11 rounded-lg cursor-pointer border-0 p-0"><span id="modal-color-hex" class="font-mono text-xs uppercase"></span></div></div>
+        <div class="col-span-2 sm:col-span-1"><label class="lbl">Цвет</label>
+          <div class="flex items-center gap-2"><input type="color" id="modal-color" class="w-12 h-12 rounded-lg cursor-pointer border-0 p-0"><span id="modal-color-hex" class="font-mono text-xs uppercase"></span></div></div>
       </div>
     </div>
-    <div class="px-6 py-4 border-t border-stone-100 flex justify-between items-center">
-      <button onclick="deleteFlavor()" id="modal-btn-delete" class="text-red-600 font-bold hover:underline">Удалить</button>
+    <div class="px-4 sm:px-6 py-3 sm:py-4 border-t border-stone-100 flex justify-between items-center gap-2 safe-b bg-white">
+      <button onclick="deleteFlavor()" id="modal-btn-delete" class="text-red-600 font-bold hover:underline min-h-[44px] px-1">Удалить</button>
       <div class="flex gap-2 ml-auto"><button onclick="closeFlavorModal()" class="btn2">Отмена</button><button onclick="saveFlavorModal()" class="btn">Сохранить</button></div>
     </div>
   </div>
@@ -175,7 +201,7 @@ body{background:#FBF7F4;color:#1E1416;font-weight:500}
 
 <script>
 // ВСТАВЬ СЮДА СВОЙ АДРЕС ИЗ CLOUDFLARE WORKERS
-const API_BASE = "https://твой-воркер.workers.dev";
+const API_BASE = "https://weathered-bird-be74.cbikyh2306.workers.dev";
 const LOCAL_ADMIN_PASSWORD = 'admin2026';
 let authToken = localStorage.getItem('canella_worker_auth') || null;
 // Пока вместо адреса стоит заглушка (пусто или кириллица), работаем локально без Worker
@@ -323,7 +349,7 @@ function renderStats() {
   ['Активных промокодов', act],
   ['Бесплатная доставка от', (db.settings.freeDeliveryThreshold || 5000).toLocaleString('ru-RU') + ' ₽']
  ];
- $('stats').innerHTML = cards.map(c => `<div class="card p-5"><div class="text-muted font-bold text-sm mb-1">${c[0]}</div><div class="font-display font-semibold text-2xl text-deep">${c[1]}</div></div>`).join('');
+ $('stats').innerHTML = cards.map(c => `<div class="card p-3.5 md:p-5"><div class="text-muted font-bold text-xs md:text-sm mb-1">${c[0]}</div><div class="font-display font-semibold text-xl md:text-2xl text-deep">${c[1]}</div></div>`).join('');
 }
 
 function imgTag(f, cls) {
@@ -333,12 +359,12 @@ function imgTag(f, cls) {
 function renderFlavors() {
  $('flavorsGrid').innerHTML = db.flavors.map(f => `
   <div class="card overflow-hidden hover:shadow-lg transition-shadow">
-   <div class="h-44 relative flex items-center justify-center overflow-hidden" style="background:${esc(f.color)}26">
+   <div class="h-40 md:h-44 relative flex items-center justify-center overflow-hidden" style="background:${esc(f.color)}26">
     <span class="absolute font-display font-bold text-5xl text-deep/10 select-none whitespace-nowrap">${esc(f.watermark)}</span>
     ${imgTag(f, 'relative z-10 h-36 w-36 object-contain drop-shadow-xl')}
     <span class="chip absolute top-3 right-3">${esc(f.badge)}</span>
    </div>
-   <div class="p-5">
+   <div class="p-4 md:p-5">
     <h4 class="font-display font-semibold text-sm mb-2 line-clamp-1">${esc(f.name)}</h4>
     <p class="text-sm text-muted font-semibold line-clamp-2 h-10 mb-4">${esc(f.desc)}</p>
     <div class="flex items-center justify-between">
@@ -375,15 +401,15 @@ function renderPromos() {
   const st = expired ? 'Истёк' : p.active ? 'Активен' : 'Выключен';
   const stCls = expired ? 'bg-stone-200 text-stone-600' : p.active ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800';
   const rules = [p.min ? `от ${p.min} ₽` : 'без минимума', p.first ? 'первый заказ' : 'любой заказ', p.exp ? `до ${p.exp.split('-').reverse().join('.')}` : 'бессрочно'].join(', ');
-  return `<div class="card p-5 flex items-center gap-4 ${p.active && !expired ? '' : 'opacity-70'}">
-   <div class="w-20 h-20 rounded-2xl bg-deep text-gold flex items-center justify-center font-display font-bold text-lg shrink-0">${promoText(p)}</div>
+  return `<div class="card promo-card p-4 md:p-5 flex items-center gap-3 md:gap-4 ${p.active && !expired ? '' : 'opacity-70'}">
+   <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-deep text-gold flex items-center justify-center font-display font-bold text-base md:text-lg shrink-0">${promoText(p)}</div>
    <div class="flex-1 min-w-0">
-    <div class="flex items-center gap-2 mb-1"><span class="font-mono font-bold text-lg truncate">${esc(p.code)}</span><span class="text-xs font-bold px-2 py-0.5 rounded-full ${stCls}">${st}</span></div>
+    <div class="flex items-center gap-2 mb-1 flex-wrap"><span class="font-mono font-bold text-lg break-all">${esc(p.code)}</span><span class="text-xs font-bold px-2 py-0.5 rounded-full ${stCls}">${st}</span></div>
     <div class="text-sm text-muted font-semibold">${rules}</div>
    </div>
-   <div class="flex flex-col gap-1.5 items-end">
+   <div class="flex md:flex-col gap-2 md:gap-1.5 items-center md:items-end w-full md:w-auto justify-between">
     <button onclick="togglePromo(${i})" class="btn2 !py-1 !px-3 text-sm">${p.active ? 'Выключить' : 'Включить'}</button>
-    <button onclick="deletePromo(${i})" class="text-red-600 font-bold text-sm hover:underline">Удалить</button>
+    <button onclick="deletePromo(${i})" class="text-red-600 font-bold text-sm hover:underline min-h-[44px] px-2">Удалить</button>
    </div></div>`;
  }).join('') || '<div class="card p-8 text-center text-muted font-semibold">Промокодов пока нет. Создайте первый в форме слева.</div>';
 }
@@ -394,7 +420,45 @@ function deletePromo(i) { if (confirm('Удалить промокод ' + db.pr
 // Редактирование вкусов
 $('modal-color').addEventListener('input', e =>$('modal-color-hex').textContent = e.target.value);
 function previewModalImg() {
- const f = { image: $('modal-image').value, name: '', color: $('modal-color').value };$('modal-preview').innerHTML = f.image ? imgTag(f, 'w-full h-full object-contain') : '';
+ const f = { image: $('modal-image').value, name: '', color: $('modal-color').value };
+ $('modal-preview').innerHTML = f.image ? imgTag(f, 'w-full h-full object-contain') : '<span class="text-xs text-muted font-bold text-center px-2">Нет фото</span>';
+ $('modal-clear').classList.toggle('hide', !f.image);
+ $('uploadLabel').textContent = f.image ? 'Заменить фото' : 'Выбрать фото';
+}
+function clearModalImage() { $('modal-image').value = ''; $('modal-file').value = ''; previewModalImg(); }
+
+// Загрузка фото из файлов телефона: уменьшаем и сжимаем, сохраняем прямо в данные
+function readAndResize(file, maxSide = 700) {
+ return new Promise((resolve, reject) => {
+  const url = URL.createObjectURL(file);
+  const img = new Image();
+  img.onload = () => {
+   const k = Math.min(1, maxSide / Math.max(img.naturalWidth, img.naturalHeight));
+   const w = Math.max(1, Math.round(img.naturalWidth * k)), h = Math.max(1, Math.round(img.naturalHeight * k));
+   const c = document.createElement('canvas'); c.width = w; c.height = h;
+   c.getContext('2d').drawImage(img, 0, 0, w, h);
+   URL.revokeObjectURL(url);
+   // WebP сохраняет прозрачность и весит мало; если браузер не умеет — PNG
+   let out = c.toDataURL('image/webp', 0.86);
+   if (!out.startsWith('data:image/webp')) out = c.toDataURL('image/png');
+   resolve(out);
+  };
+  img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('bad image')); };
+  img.src = url;
+ });
+}
+async function handleImageFile(input) {
+ const file = input.files && input.files[0];
+ if (!file) return;
+ if (!file.type.startsWith('image/')) { alert('Выберите файл-картинку (JPG, PNG, WebP).'); input.value = ''; return; }
+ $('uploadLabel').textContent = 'Загрузка...';
+ try {
+  $('modal-image').value = await readAndResize(file);
+ } catch (e) {
+  alert('Не удалось открыть это изображение. Попробуйте другое фото.');
+ }
+ input.value = '';
+ previewModalImg();
 }
 
 function openFlavorModal(id = null) {
@@ -404,9 +468,10 @@ function openFlavorModal(id = null) {
  ['name','watermark','desc','price','badge','color','image'].forEach(k => $('modal-'+k).value = f[k]);$('modal-color-hex').textContent = f.color;
  previewModalImg();
  $('flavorModal').classList.remove('hide');
+ document.body.style.overflow='hidden';
 }
 
-function closeFlavorModal() { $('flavorModal').classList.add('hide'); }
+function closeFlavorModal() { $('flavorModal').classList.add('hide'); document.body.style.overflow=''; $('modal-file').value=''; }
 
 function saveFlavorModal() {
  if (!$('modal-name').value.trim()) {$('modal-name').focus(); return; }
@@ -468,7 +533,7 @@ async function saveAllData() {
 
     if (res.ok) {
       const indicator = $('saveIndicator');
-      indicator.textContent = 'Сохранено в GitHub';
+      indicator.textContent = 'Сохранено в GitHub ✓';
       indicator.classList.remove('opacity-0');
       setTimeout(() => indicator.classList.add('opacity-0'), 2500);
       renderStats();
