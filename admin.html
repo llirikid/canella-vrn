@@ -79,7 +79,10 @@ button,input,select,textarea{font-family:inherit}
         <h1 id="pageTitle" class="font-display font-bold text-base md:text-xl text-deep truncate">Каталог вкусов</h1>
         <p class="text-muted font-semibold text-xs md:text-sm hidden sm:block">Управление сайтом Canella VRN</p>
       </div>
-      <button id="saveBtn" onclick="saveAllData()" class="btn shrink-0 !px-4 text-sm md:text-[15px]">Сохранить</button>
+      <div class="flex items-center gap-2 shrink-0">
+        <button onclick="resetToDefaults()" class="btn2 !px-3 text-xs md:text-sm" title="Загрузить стандартные 7 вкусов">Сбросить к 7 вкусам</button>
+        <button id="saveBtn" onclick="saveAllData()" class="btn shrink-0 !px-4 text-sm md:text-[15px]">Сохранить</button>
+      </div>
     </div>
   </header>
   <div id="toast"><span id="saveIndicator" class="inline-block text-sm font-bold text-emerald-700 bg-emerald-100 px-4 py-2.5 rounded-xl shadow-lg opacity-0 transition-opacity">Сохранено</span></div>
@@ -200,7 +203,7 @@ button,input,select,textarea{font-family:inherit}
 </div>
 
 <script>
-// ВСТАВЬ СЮДА СВОЙ АДРЕС ИЗ CLOUDFLARE WORKERS
+// ВСТАВЬ СЮДА СЮДА СВОЙ АДРЕС ИЗ CLOUDFLARE WORKERS
 const API_BASE = "https://weathered-bird-be74.cbikyh2306.workers.dev";
 const LOCAL_ADMIN_PASSWORD = 'admin2026';
 let authToken = localStorage.getItem('canella_worker_auth') || null;
@@ -210,11 +213,13 @@ const LOCAL_DATA_KEY = 'canella_admin_data';
 
 const defaultData = {
  flavors: [
-  {id:'f1',name:'Фисташка — малина',watermark:'Фисташка',badge:'Хит',desc:'Насыщенный ганаш из сицилийской фисташки и сочное малиновое конфи.',color:'#84A962',price:190,image:'macaroon1.png'},
-  {id:'f2',name:'Дорблю — сладкая груша',watermark:'Дорблю',badge:'Гурме',desc:'Изысканный контраст благородного сыра дорблю и томлёной пряной груши.',color:'#D1BFA5',price:210,image:'macaroon2.png'},
-  {id:'f3',name:'Кофе — бейлис',watermark:'Бейлис',badge:'Авторский',desc:'Сливочный капучино с добавлением оригинального ликёра Baileys.',color:'#B88A60',price:195,image:'macaroon3.png'},
-  {id:'f4',name:'Шоколадный трюфель',watermark:'Трюфель',badge:'Классика',desc:'Глубокий бархатный вкус бельгийского тёмного шоколада Callebaut 70,5%.',color:'#4A2E26',price:190,image:'macaroon4.png'},
-  {id:'f5',name:'Пармезан — инжир',watermark:'Пармезан',badge:'Гурме',desc:'Выдержанный 24 месяца пармезан в гармонии с вялёным инжиром.',color:'#D99F48',price:220,image:'macaroon5.png'}
+  {id:'f1',name:'Лимон — мак',watermark:'Лимон',badge:'Свежесть',desc:'Нежный взбитый ганаш с яркой лимонной кислинкой и хрустящими зёрнами голубого мака.',color:'#F2E5B8',price:190,image:'macaroon1.png'},
+  {id:'f2',name:'Раффаэлло',watermark:'Раффаэлло',badge:'Хит',desc:'Воздушный кокосовый крем на белом шоколаде с цельным жареным миндалём в обсыпке из кокосовой стружки.',color:'#DFD3C3',price:200,image:'macaroon2.png'},
+  {id:'f3',name:'Тирамису',watermark:'Тирамису',badge:'Классика',desc:'Сливочный крем на основе маскарпоне, яркий кофейный ганаш и бархатная пудра из бельгийского какао.',color:'#6F4430',price:195,image:'macaroon3.png'},
+  {id:'f4',name:'Яблочный штрудель',watermark:'Штрудель',badge:'Авторский',desc:'Пряная яблочная начинка с цейлонской корицей, ванильный ганаш и хрустящее песочное печенье.',color:'#C98C5A',price:200,image:'macaroon4.png'},
+  {id:'f5',name:'Клубничный улун',watermark:'Улун',badge:'Гурме',desc:'Нежный ганаш с настоем молочного улуна, клубничное конфи, сублимированная ягода и пищевое золото.',color:'#E89EB0',price:220,image:'macaroon5.png'},
+  {id:'f6',name:'Солёная карамель',watermark:'Карамель',badge:'Хит',desc:'Тягучая домашняя карамель с кристаллами морской соли, сливочный крем и хрустящий карамельный попкорн.',color:'#D99B52',price:200,image:'macaroon6.png'},
+  {id:'f7',name:'Фисташка — малина',watermark:'Фисташка',badge:'Хит',desc:'Насыщенный ганаш из иранской фисташки с ярким малиновым центром и кусочками сублимированной малины.',color:'#96B56A',price:210,image:'macaroon7.png'}
  ],
  promos: [{code:'CANELLA10',type:'percent',value:10,min:0,exp:'',first:true,active:true}],
  settings: {freeDeliveryThreshold:5000,standardDeliveryCost:350,promo1Title:'Бесплатная доставка от 5 000 ₽',promo1Desc:'Привезём набор по Воронежу бесплатно',promo2Title:'Скидка 10% на первый заказ',promo2Desc:'Введите промокод в корзине',promo2Badge:'CANELLA10'}
@@ -223,6 +228,13 @@ const defaultData = {
 let db = JSON.parse(JSON.stringify(defaultData));
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function resetToDefaults() {
+  if (confirm('Загрузить стандартный набор из 7 новых вкусов? После этого не забудьте нажать «Сохранить».')) {
+    db.flavors = JSON.parse(JSON.stringify(defaultData.flavors));
+    renderAll();
+  }
+}
 
 async function checkPassword() {
   const password = $('adminPassword').value;
@@ -303,7 +315,7 @@ async function loadDataFromWorker() {
       db = {
         ...defaultData,
         ...incoming,
-        flavors: Array.isArray(incoming.flavors) ? incoming.flavors : defaultData.flavors,
+        flavors: Array.isArray(incoming.flavors) && incoming.flavors.length ? incoming.flavors : defaultData.flavors,
         promos: Array.isArray(incoming.promos) ? incoming.promos : defaultData.promos,
         settings: { ...defaultData.settings, ...(incoming.settings || {}) }
       };
@@ -359,7 +371,7 @@ function imgTag(f, cls) {
 function renderFlavors() {
  $('flavorsGrid').innerHTML = db.flavors.map(f => `
   <div class="card overflow-hidden hover:shadow-lg transition-shadow">
-   <div class="h-40 md:h-44 relative flex items-center justify-center overflow-hidden" style="background:${esc(f.color)}26">
+   <div class="h-40 md:h-44 relative flex items-center justify-center overflow-hidden" style="background:${esc(f.color)}40">
     <span class="absolute font-display font-bold text-5xl text-deep/10 select-none whitespace-nowrap">${esc(f.watermark)}</span>
     ${imgTag(f, 'relative z-10 h-36 w-36 object-contain drop-shadow-xl')}
     <span class="chip absolute top-3 right-3">${esc(f.badge)}</span>
@@ -438,7 +450,6 @@ function readAndResize(file, maxSide = 700) {
    const c = document.createElement('canvas'); c.width = w; c.height = h;
    c.getContext('2d').drawImage(img, 0, 0, w, h);
    URL.revokeObjectURL(url);
-   // WebP сохраняет прозрачность и весит мало; если браузер не умеет — PNG
    let out = c.toDataURL('image/webp', 0.86);
    if (!out.startsWith('data:image/webp')) out = c.toDataURL('image/png');
    resolve(out);
@@ -548,10 +559,9 @@ async function saveAllData() {
     alert(localMode ? 'Не удалось сохранить данные на этом устройстве.' : 'Сетевая ошибка при обращении к Worker.');
   } finally {
     btn.disabled = false;
-    btn.textContent = 'Сохранить изменения';
+    btn.textContent = 'Сохранить';
   }
 }
-
 </script>
 </body>
 </html>

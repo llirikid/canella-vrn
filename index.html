@@ -218,21 +218,21 @@
     <!-- Слайдер вкусов -->
     <section id="flavors" class="reveal relative overflow-hidden bg-[#F8F5F2]">
         <div class="lg:hidden absolute top-0 inset-x-0 h-[380px] sm:h-[440px] pointer-events-none">
-            <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none"><path class="bg-curve" d="M0 0 H100 V84 C72 100 28 100 0 86 Z" fill="#84A962"/></svg>
+            <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none"><path class="bg-curve" d="M0 0 H100 V84 C72 100 28 100 0 86 Z" fill="#F2E5B8"/></svg>
         </div>
         <div class="hidden lg:block absolute inset-y-0 right-0 w-[48vw] pointer-events-none">
-            <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none"><path class="bg-curve" d="M 25 0 C 10 35, 40 65, 15 100 L 100 100 L 100 0 Z" fill="#84A962"/></svg>
+            <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none"><path class="bg-curve" d="M 25 0 C 10 35, 40 65, 15 100 L 100 100 L 100 0 Z" fill="#F2E5B8"/></svg>
             <div class="absolute right-6 xl:right-10 inset-y-0 flex items-center overflow-hidden">
-                <span id="watermark-text" aria-hidden="true" class="stroke-text font-display text-6xl xl:text-7xl tracking-widest uppercase opacity-40">Фисташка</span>
+                <span id="watermark-text" aria-hidden="true" class="stroke-text font-display text-6xl xl:text-7xl tracking-widest uppercase opacity-40">Лимон</span>
             </div>
         </div>
 
         <div id="swipe-area" class="mobile-curve-clip relative z-10 h-[380px] sm:h-[440px] lg:h-auto lg:absolute lg:inset-y-0 lg:left-[36%] lg:right-0 overflow-hidden cursor-grab active:cursor-grabbing" style="touch-action: pan-y;">
             <div id="macaroon-stage" class="relative w-full h-full flex items-center justify-center">
-                <div id="macaroon-glow" class="absolute w-[200px] h-[200px] sm:w-[280px] sm:h-[280px] rounded-full blur-[70px] opacity-70 pointer-events-none" style="background-color: #84A962;"></div>
+                <div id="macaroon-glow" class="absolute w-[200px] h-[200px] sm:w-[280px] sm:h-[280px] rounded-full blur-[70px] opacity-70 pointer-events-none" style="background-color: #F2E5B8;"></div>
                 
                 <div id="active-item" class="macaroon-item">
-                    <img id="active-item-img" src="macaroon1.png" alt="Фисташка — Малина" loading="eager" class="w-full h-full object-contain pointer-events-none">
+                    <img id="active-item-img" src="macaroon1.png" alt="Лимон — мак" loading="eager" class="w-full h-full object-contain pointer-events-none">
                 </div>
             </div>
         </div>
@@ -241,11 +241,11 @@
             <div class="w-full lg:w-[38%] lg:pointer-events-auto">
                 <div class="flex items-baseline justify-between mb-6 lg:mb-10">
                     <h2 class="font-display text-2xl text-canella-maroon">Каталог вкусов</h2>
-                    <span id="slide-number" class="font-mono text-sm text-stone-500">01 / 05</span>
+                    <span id="slide-number" class="font-mono text-sm text-stone-500">01 / 07</span>
                 </div>
-                <p id="badge-cat" class="text-sm text-stone-500 mb-2">Хит</p>
-                <h3 id="product-title" class="font-display text-2xl sm:text-3xl lg:text-4xl leading-tight text-canella-maroon mb-3">Фисташка — малина</h3>
-                <p id="product-desc" class="text-stone-600 leading-relaxed mb-6 max-w-md">Насыщенный ганаш из сицилийской фисташки и сочное малиновое конфи.</p>
+                <p id="badge-cat" class="text-sm text-stone-500 mb-2">Свежесть</p>
+                <h3 id="product-title" class="font-display text-2xl sm:text-3xl lg:text-4xl leading-tight text-canella-maroon mb-3">Лимон — мак</h3>
+                <p id="product-desc" class="text-stone-600 leading-relaxed mb-6 max-w-md">Нежный взбитый ганаш с яркой лимонной кислинкой и хрустящими зёрнами голубого мака.</p>
                 <div class="flex flex-wrap items-center gap-x-6 gap-y-4 mb-8">
                     <span id="product-price" class="font-display text-2xl text-canella-maroon">190 ₽</span>
                     <button id="add-carousel-item-btn" class="btn">В корзину</button>
@@ -306,9 +306,9 @@
                 <p id="boxHintText" class="text-xs text-center text-stone-400 mt-2">Кликайте по вкусам ниже, чтобы добавить их в коробку</p>
             </div>
 
-            <div class="max-w-3xl mx-auto">
+            <div class="max-w-4xl mx-auto">
                 <p class="text-xs font-bold text-center text-stone-500 uppercase tracking-wider mb-4">2. Нажмите на вкус для добавления в коробку</p>
-                <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-10" id="flavorsPickerContainer"></div>
+                <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 mb-10" id="flavorsPickerContainer"></div>
 
                 <div class="text-center">
                     <button id="addCustomBoxToCartBtn" onclick="addCustomBoxToCart()" class="btn px-10 py-4 shadow-luxury" disabled>
@@ -464,14 +464,16 @@
     </div>
 
     <script>
-        // Базовые данные на случай отсутствия сети
+        // Базовые данные с новыми 7 вкусами
         let appDb = {
             flavors: [
-                { id: 'f1', name: 'Фисташка — малина', watermark: 'Фисташка', badge: 'Хит', desc: 'Насыщенный ганаш из сицилийской фисташки и сочное малиновое конфи.', color: '#84A962', price: 190, image: 'macaroon1.png' },
-                { id: 'f2', name: 'Дорблю — сладкая груша', watermark: 'Дорблю', badge: 'Гурме', desc: 'Изысканный контраст благородного сыра дорблю и томлёной пряной груши.', color: '#D1BFA5', price: 210, image: 'macaroon2.png' },
-                { id: 'f3', name: 'Кофе — бейлис', watermark: 'Бейлис', badge: 'Авторский', desc: 'Сливочный капучино с добавлением оригинального ликёра Baileys.', color: '#B88A60', price: 195, image: 'macaroon3.png' },
-                { id: 'f4', name: 'Шоколадный трюфель', watermark: 'Трюфель', badge: 'Классика', desc: 'Глубокий бархатный вкус бельгийского тёмного шоколада Callebaut 70,5%.', color: '#4A2E26', price: 190, image: 'macaroon4.png' },
-                { id: 'f5', name: 'Пармезан — инжир', watermark: 'Пармезан', badge: 'Гурме', desc: 'Выдержанный 24 месяца пармезан в гармонии с вялёным инжиром.', color: '#D99F48', price: 220, image: 'macaroon5.png' }
+                { id: 'f1', name: 'Лимон — мак', watermark: 'Лимон', badge: 'Свежесть', desc: 'Нежный взбитый ганаш с яркой лимонной кислинкой и хрустящими зёрнами голубого мака.', color: '#F2E5B8', price: 190, image: 'macaroon1.png' },
+                { id: 'f2', name: 'Раффаэлло', watermark: 'Раффаэлло', badge: 'Хит', desc: 'Воздушный кокосовый крем на белом шоколаде с цельным жареным миндалём в обсыпке из кокосовой стружки.', color: '#DFD3C3', price: 200, image: 'macaroon2.png' },
+                { id: 'f3', name: 'Тирамису', watermark: 'Тирамису', badge: 'Классика', desc: 'Сливочный крем на основе маскарпоне, яркий кофейный ганаш и бархатная пудра из бельгийского какао.', color: '#6F4430', price: 195, image: 'macaroon3.png' },
+                { id: 'f4', name: 'Яблочный штрудель', watermark: 'Штрудель', badge: 'Авторский', desc: 'Пряная яблочная начинка с цейлонской корицей, ванильный ганаш и хрустящее песочное печенье.', color: '#C98C5A', price: 200, image: 'macaroon4.png' },
+                { id: 'f5', name: 'Клубничный улун', watermark: 'Улун', badge: 'Гурме', desc: 'Нежный ганаш с настоем молочного улуна, клубничное конфи, сублимированная ягода и пищевое золото.', color: '#E89EB0', price: 220, image: 'macaroon5.png' },
+                { id: 'f6', name: 'Солёная карамель', watermark: 'Карамель', badge: 'Хит', desc: 'Тягучая домашняя карамель с кристаллами морской соли, сливочный крем и хрустящий карамельный попкорн.', color: '#D99B52', price: 200, image: 'macaroon6.png' },
+                { id: 'f7', name: 'Фисташка — малина', watermark: 'Фисташка', badge: 'Хит', desc: 'Насыщенный ганаш из иранской фисташки с ярким малиновым центром и кусочками сублимированной малины.', color: '#96B56A', price: 210, image: 'macaroon7.png' }
             ],
             promos: [
                 { code: 'CANELLA10', type: 'percent', value: 10, min: 0, exp: '', first: true, active: true }
@@ -500,7 +502,7 @@
                 const res = await fetch('./content.json?v=' + Date.now());
                 if (res.ok) {
                     const loaded = await res.json();
-                    if (loaded.flavors) appDb.flavors = loaded.flavors;
+                    if (loaded.flavors && loaded.flavors.length) appDb.flavors = loaded.flavors;
                     if (loaded.settings) appDb.settings = loaded.settings;
                     if (loaded.promos) appDb.promos = loaded.promos;
                     flavorsData = appDb.flavors;
@@ -741,7 +743,9 @@
             document.getElementById('product-price').textContent = d.price + ' ₽';
             document.getElementById('badge-cat').textContent = d.badge;
             document.getElementById('watermark-text').textContent = d.watermark;
-            document.getElementById('slide-number').textContent = `0${index + 1} / 0${flavorsData.length}`;
+            const cur = String(index + 1).padStart(2, '0');
+            const tot = String(flavorsData.length).padStart(2, '0');
+            document.getElementById('slide-number').textContent = `${cur} / ${tot}`;
             
             const activeImg = document.getElementById('active-item-img');
             if (activeImg) {
